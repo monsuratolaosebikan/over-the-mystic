@@ -16,17 +16,21 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 
-    /** Called when the user taps one of the homescreen buttons */
+    /** Called when the user taps one of the home screen buttons */
     public void launchTour(View view) {
         // Do something in response to button
         switch (view.getId()) {
             case R.id.bike:
-                Log.d("MainActivity", "Bike");
+                // call bike-specific function
+                Intent bikeIntent = new Intent(this, DisplayBikeTourActivity.class);
+                startActivity(bikeIntent);
                 break;
             case R.id.walk:
-                Log.d("MainActivity", "Walk");
+                // call walking-specific function
+                Intent walkingIntent = new Intent(this, DisplayWalkingTourActivity.class);
+                startActivity(walkingIntent);
                 break;
         }
     }
-    
+
 }
