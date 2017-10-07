@@ -114,10 +114,17 @@ public class MapActivity extends AppCompatActivity {
                 new LatLng(42.41679, -71.11527)
         };
 
+        String[] locationNames = new String[]{ "Ballou Hall", "Mystic River",
+                "Tufts University", "Tisch Library", "Women's Center", "Tufts Park",
+                "Stearns Street" };
+
         for (int i = 0; i < locations.length; i++) {
             Site site = new Site();
-            site.setName("Location " + i);
-            site.setShortDesc(locations[i].toString());
+            site.setName(i + 1 +  ". " + locationNames[i]);
+            site.setShortDesc(
+                    "Ballou Hall is a historic academic building on the campus of" +
+                            " Tufts University in Medford, Massachusetts.  "
+            );
             site.setLocation(locations[i]);
             sites.add(site);
 
