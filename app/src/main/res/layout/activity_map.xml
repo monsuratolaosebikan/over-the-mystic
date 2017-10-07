@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:mapbox="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -9,10 +9,16 @@
         android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        mapbox:mapbox_cameraTargetLat="42.40742"
-        mapbox:mapbox_cameraTargetLng="-71.12012"
+        mapbox:mapbox_cameraTargetLat="42.40817"
+        mapbox:mapbox_cameraTargetLng="-71.11375"
         mapbox:mapbox_styleUrl="mapbox://styles/mapbox/streets-v10"
         mapbox:mapbox_cameraTilt="60"
-        mapbox:mapbox_cameraZoom="13" />
+        mapbox:mapbox_cameraZoom="14" />
 
-</RelativeLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvSite"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"/>
+
+</FrameLayout>
