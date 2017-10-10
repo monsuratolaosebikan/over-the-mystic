@@ -22,6 +22,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
+        <activity android:name=".SiteSelection"></activity>
+        <uses-permission android:name="android.permission.INTERNET" />
+
     </application>
 
 </manifest>
