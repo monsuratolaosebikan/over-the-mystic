@@ -11,29 +11,36 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@android:drawable/ic_media_play"
-        tools:layout_editor_absoluteY="292dp"
         android:layout_marginLeft="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginRight="8dp"
         app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/locationImage"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp" />
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="21dp" />
 
-    <TextView
-        android:id="@+id/locationDescription"
-        android:layout_width="353dp"
-        android:layout_height="155dp"
-        android:text="For 86 years, Jumbo stood in Barnum Hall and was a veritable mecca on campus. Students, parents and other campus visitors would pop pennies in his trunk or give a tug on his tail to bring luck for an upcoming exam or athletic competition. Jumbo mania came to a fiery end on April 14, 1975 when Barnum Hall and the beloved elephant were consumed in an electrical fire.
+    <ScrollView
+        android:id="@+id/scrolltext"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_default="wrap"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/playButton"
+        android:layout_marginTop="10dp"
+        app:layout_constraintHorizontal_bias="0.813">
+        <TextView
+            android:id="@+id/locationDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="155dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:text="For 86 years, Jumbo stood in Barnum Hall and was a veritable mecca on campus. Students, parents and other campus visitors would pop pennies in his trunk or give a tug on his tail to bring luck for an upcoming exam or athletic competition. Jumbo mania came to a fiery end on April 14, 1975 when Barnum Hall and the beloved elephant were consumed in an electrical fire.
 
 Jumbo's spirit lives on. Some of his ashes were recovered in a peanut butter jar that has remained in the athletics director’s office where students continue to rub it for good luck. "
-        tools:layout_editor_absoluteY="340dp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintHorizontal_bias="0.533"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp" />
+            tools:layout_editor_absoluteX="0dp"/>
+    </ScrollView>
 
     <ImageView
         android:id="@+id/locationImage"
@@ -43,7 +50,8 @@ Jumbo's spirit lives on. Some of his ashes were recovered in a peanut butter jar
         app:srcCompat="@drawable/jumbo"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintHorizontal_bias="0.0" />
+        app:layout_constraintHorizontal_bias="0.0"
+        tools:layout_editor_absoluteY="0dp" />
 
 
 </android.support.constraint.ConstraintLayout>
