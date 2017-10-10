@@ -9,6 +9,8 @@ import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
@@ -61,6 +63,8 @@ public class MapActivity extends AppCompatActivity {
 
                 MapActivity.this.mapboxMap = mapboxMap;
 
+                mapboxMap.setMyLocationEnabled(true);
+
                 setSites();
 
                 SelectedSitesRecyclerViewAdapter adapter = new SelectedSitesRecyclerViewAdapter(sites, mapboxMap);
@@ -72,6 +76,13 @@ public class MapActivity extends AppCompatActivity {
                 snapHelper.attachToRecyclerView(recyclerView);
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.map_activity_actions, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
