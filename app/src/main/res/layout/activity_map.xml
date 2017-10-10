@@ -12,13 +12,13 @@
         mapbox:mapbox_cameraTargetLat="42.40817"
         mapbox:mapbox_cameraTargetLng="-71.11375"
         mapbox:mapbox_styleUrl="mapbox://styles/mapbox/streets-v10"
-        mapbox:mapbox_cameraTilt="60"
         mapbox:mapbox_cameraZoom="14" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvSite"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"/>
+        android:layout_gravity="bottom">
+    </android.support.v7.widget.RecyclerView>
 
 </FrameLayout>
