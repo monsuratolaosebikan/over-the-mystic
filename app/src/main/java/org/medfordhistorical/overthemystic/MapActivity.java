@@ -1,16 +1,19 @@
 package org.medfordhistorical.overthemystic;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSnapHelper;
+import android.support.v7.widget.MenuItemHoverListener;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
@@ -19,6 +22,9 @@ import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
+import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
+import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
 import com.mapbox.services.api.directions.v5.DirectionsCriteria;
 import com.mapbox.services.api.directions.v5.MapboxDirections;
 import com.mapbox.services.api.directions.v5.models.DirectionsResponse;
@@ -29,6 +35,7 @@ import com.mapbox.services.commons.models.Position;
 import java.util.List;
 import java.util.ArrayList;
 
+import okhttp3.Route;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -42,6 +49,8 @@ public class MapActivity extends AppCompatActivity {
     private MapView mapView;
     private RecyclerView recyclerView;
     private List<Site> sites;
+    private DirectionsRoute currentRoute;
+    private NavigationMapRoute navigationMapRoute;
     private String ACCESS_TOKEN = "pk.eyJ1IjoibWVkZm9yZGhpc3RvcmljYWwiLCJhIjoiY2o4ZXNiNHN2M" +
             "TZycjMzb2ttcWp0dDJ1aiJ9.zt52s3jkwqtDc1I2Fv5cJg";
 
@@ -83,6 +92,17 @@ public class MapActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.map_activity_actions, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_navigate:
+                startNavigation();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -156,7 +176,7 @@ public class MapActivity extends AppCompatActivity {
 
             mapboxMap.addMarker(new MarkerOptions()
                       .position(locations[i])
-                      .title("Tufts University")
+                      .title(locationNames[i])
                       .snippet("Welcome jumbos!"));
 
             getRoute(locations, "bike");
@@ -177,51 +197,55 @@ public class MapActivity extends AppCompatActivity {
             coordinates.add(coordinate);
         }
 
-        MapboxDirections client = new MapboxDirections.Builder()
-                .setAccessToken(ACCESS_TOKEN)
-                .setProfile(profile)
-                .setOrigin(coordinates.get(0))
-                .setDestination(coordinates.get(coordinates.size()-1))
-                .setCoordinates(coordinates)
-                .setOverview("full")
-                .build();
+        NavigationRoute.Builder navigationRouteBuilder = NavigationRoute.builder()
+                .accessToken(Mapbox.getAccessToken())
+                .profile(profile)
+                .origin(coordinates.get(0))
+                .destination(coordinates.get(coordinates.size()-1));
 
-
-        client.enqueueCall(new Callback<DirectionsResponse>() {
-            @Override
-            public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
-                if (response.body() == null || response.body().getRoutes().size() == 0) {
-                    Log.e("Map", "No routes found");
-                    return;
-                }
-
-                DirectionsRoute route = response.body().getRoutes().get(0);
-                drawRoute(route);
-
-            }
-
-            @Override
-            public void onFailure(Call<DirectionsResponse> call, Throwable t) {
-                Log.e("Map", "Error: " + t.getMessage());
-            }
-        });
-    }
-
-    public void drawRoute(DirectionsRoute route) {
-
-        LineString lineString = LineString.fromPolyline(route.getGeometry(), PRECISION_6);
-        List<Position> coordinates = lineString.getCoordinates();
-        LatLng[] points = new LatLng[coordinates.size()];
-        for (int i = 0; i < coordinates.size(); i++) {
-            points[i] = new LatLng(
-                    coordinates.get(i).getLatitude(),
-                    coordinates.get(i).getLongitude());
+        for (int index = 1; index < coordinates.size(); index++) {
+            navigationRouteBuilder.addWaypoint(coordinates.get(index));
         }
 
-        mapboxMap.addPolyline(new PolylineOptions()
-                .add(points)
-                .color(Color.parseColor("#303F9F"))
-                .width(6));
+        navigationRouteBuilder.build()
+                .getRoute(new Callback<DirectionsResponse>() {
+                    @Override
+                    public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
+                        if (response.body() == null) {
+                            Log.e("nav", "No routes found, make sure you set the right user and access token.");
+                            return;
+                        } else if (response.body().getRoutes().size() < 1) {
+                            Log.e("nav", "No routes found");
+                            return;
+                        }
+
+                        currentRoute = response.body().getRoutes().get(0);
+
+                        // Draw the route on the map
+                        if (navigationMapRoute != null) {
+                            navigationMapRoute.removeRoute();
+                        } else {
+                            navigationMapRoute = new NavigationMapRoute(null, mapView, mapboxMap);
+                        }
+                        navigationMapRoute.addRoute(currentRoute);
+                    }
+
+                    @Override
+                    public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
+                        Log.e("nav", "Error: " + throwable.getMessage());
+                    }
+                });
+    }
+
+    public void startNavigation() {
+        Position origin = Position.fromCoordinates(-77.03613, 38.90992);
+        Position destination = Position.fromCoordinates(-77.0365, 38.8977);
+
+        boolean simulateRoute = true;
+
+        if(currentRoute != null) {
+            NavigationLauncher.startNavigation(this, currentRoute, null, simulateRoute);
+        }
     }
 
 }
