@@ -6,33 +6,25 @@
     android:layout_height="wrap_content"
     card_view:cardUseCompatPadding="true">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/white"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/BookName"
+        <ImageView
+            android:id="@+id/img"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:textColor="@android:color/black"
-            android:textSize="16sp" />
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop" />
 
         <TextView
-            android:id="@+id/AuthorName"
+            android:id="@+id/name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_below="@+id/country_photo"
-            android:background="#1976D2"
-            android:gravity="center_horizontal"
-            android:paddingBottom="8dp"
-            android:paddingTop="8dp"
-            android:text="hello_world"
-            android:textColor="#ffffff"
-            android:textSize="13sp" />
+            android:gravity="center" />
+
     </LinearLayout>
 
 </android.support.v7.widget.CardView>

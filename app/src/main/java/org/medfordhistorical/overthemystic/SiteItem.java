@@ -1,7 +1,9 @@
 package org.medfordhistorical.overthemystic;
 
 /**
- * Created by annakasagawa on 10/5/17.
+ * The SiteItem class holds all the information about each of the historical sites.
+ * The class contains get and set functions that will return or set a variable with information
+ * about the site.
  */
 
 public class SiteItem {
@@ -12,43 +14,49 @@ public class SiteItem {
         private String _desc;
 
 
-
         public String getName()
         {
             return _name;
+        }
+
+        public void setName(String name)
+        {
+            this._name = name;
         }
 
         public int getLat(){
             return _lat;
         }
 
+        public void setLat(int lat)
+        {
+            this._lat = lat;
+        }
+
         public int getLng(){
             return _lng;
+        }
+
+        public void setLng(int lng)
+        {
+            this._lng = lng;
         }
 
         public String getImageurl(){
             return _imageurl;
         }
 
+        public void setImageurl(String imageurl)
+        {
+            this._imageurl = imageurl;
+        }
+
         public String getDesc(){
             return _desc;
         }
 
-        
-
-
-    public void setName(String name)
-        {
-            this._name = name;
-        }
-
-        public String getAuthor()
-        {
-            return _author;
-        }
-
-        public void setAuthor(String auth)
-        {
-            this._author = auth;
+        public void setDesc(String desc){
+            this. _desc = desc;
         }
 }
+
