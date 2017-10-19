@@ -9,6 +9,7 @@ import android.media.MediaPlayer;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
@@ -19,7 +20,8 @@ public class ViewLocationDetail extends AppCompatActivity {
     private MediaPlayer mediaPlayer;
     private ProgressDialog progressDialog;
     private String url = "http://174.138.43.181/directus/storage/uploads/00000000004.mp3";
-    private String textBox;
+    private TextView description;
+    private String text = "Ballou Hall, named for Tufts' first president Hosea Ballou, was the first building to be erected for the new Tufts College. The cornerstone was laid in 1853 and construction was completed the following year. Designed by Boston architect Gridley James Fox Bryant (1816-1899), Ballou Hall was initially referred to as simply College Building or College Hall. It housed classrooms, the library, laboratories, a museum, administrative and faculty offices, student living quarters, and a chapel, now the Coolidge Room.\nImage and text courtesy of the Tufts Digital Collections and Archives.";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +33,9 @@ public class ViewLocationDetail extends AppCompatActivity {
         Glide.with(imageView.getContext())
                 .load("http://174.138.43.181/directus/storage/uploads/00000000003.jpg")
                 .into(imageView);
+
+        description = (TextView) findViewById(R.id.locationDescription);
+        description.setText(text);
 
         btn = (Button) findViewById(R.id.play);
         progressDialog = new ProgressDialog(this);
