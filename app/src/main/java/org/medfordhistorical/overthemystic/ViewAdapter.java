@@ -7,19 +7,20 @@ import android.widget.ImageView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 //recycle view adapter that will use layout for each item
 public class ViewAdapter extends RecyclerView.Adapter<ViewAdapter.ViewHolder> {
     private Context context;
+    private ArrayList<Site> siteList;
 
-    public int[] imgList = {R.drawable.ballou, R.drawable.bo, R.drawable.braker, R.drawable.goddard, R.drawable.west};
-
-    public String[] nameList = {"Ballou","Bo", "Braker", "Goddard", "West"};
-
-    public ViewAdapter(Context context) {
+    public ViewAdapter(Context context, ArrayList<Site> sites) {
         this.context = context;
+        this.siteList = sites;
     }
 
     @Override
@@ -32,17 +33,17 @@ public class ViewAdapter extends RecyclerView.Adapter<ViewAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.imageView.setImageResource(imgList[position]);
-        holder.textView.setText(nameList[position]);
+//        holder.imageView.setImageResource(siteList.);
+        holder.textView.setText(siteList.get(position).getName());
     }
 
     @Override
     public int getItemCount() {
-        return nameList.length;
+        return siteList.size();
     }
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         public ImageView imageView;
         public TextView textView;
 
@@ -52,10 +53,24 @@ public class ViewAdapter extends RecyclerView.Adapter<ViewAdapter.ViewHolder> {
             imageView = (ImageView) itemView.findViewById(R.id.img);
             textView = (TextView) itemView.findViewById(R.id.name);
 
+            itemView.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View view){
+            int position = getAdapterPosition();
+            if (position != RecyclerView.NO_POSITION) {
+                String name = siteList.get(position).getName();
+                Toast.makeText(context, name, Toast.LENGTH_SHORT).show();
+            }
+
+        }
+
     }
 
 }
+
+
 
 
 
