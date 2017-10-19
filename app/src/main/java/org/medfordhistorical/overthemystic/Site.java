@@ -1,16 +1,20 @@
 package org.medfordhistorical.overthemystic;
+import com.mapbox.mapboxsdk.geometry.LatLng;
+
 
 /**
  * The SiteItem class holds all the information about each of the historical sites.
  * The class contains get and set functions that will return or set a variable with information
  * about the site.
  */
+
 public class Site {
 
     private String name;
     private String shortDesc;
     private String longDesc;
     private String imageUrl;
+    private LatLng location;
 
 
     public String getName() {
@@ -45,7 +49,11 @@ public class Site {
         this.imageUrl = imageUrl;
     }
 
+    public LatLng getLocation() {
+        return location;
+    }
+
+    public void setLocation(LatLng location) {
+        this.location = location;
+    }
 }
-
-
-
