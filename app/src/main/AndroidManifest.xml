@@ -27,9 +27,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
+
         <activity android:name=".ViewLocationDetail"
             android:screenOrientation="portrait">
         </activity>
+
         <activity android:name=".MapActivity">
             android:parentActivityName=".StartTourActivity" >
             <!-- The meta-data tag is required if you support API level 15 and lower -->
