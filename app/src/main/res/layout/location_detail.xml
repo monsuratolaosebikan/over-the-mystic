@@ -7,18 +7,27 @@
     tools:context="org.medfordhistorical.overthemystic.ViewLocationDetail">
 
     <ImageView
-        android:id="@+id/playButton"
+        android:id="@+id/locationImage"
+        android:layout_width="0dp"
+        android:layout_height="276dp"
+        android:scaleType="fitXY"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteY="0dp" />
+
+    <Button
+        android:id="@+id/play"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/ic_media_play"
-        android:layout_marginLeft="8dp"
+        android:visibility="visible"
+        android:text="Start Streaming"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginRight="8dp"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/locationImage"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginTop="21dp" />
+        app:layout_constraintVertical_bias="0.645" />
 
     <ScrollView
         android:id="@+id/scrolltext"
@@ -27,8 +36,8 @@
         app:layout_constraintHeight_default="wrap"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/playButton"
-        android:layout_marginTop="10dp"
+        app:layout_constraintTop_toBottomOf="@+id/play"
+        android:layout_marginTop="20dp"
         app:layout_constraintHorizontal_bias="0.813">
         <TextView
             android:id="@+id/locationDescription"
@@ -41,17 +50,6 @@
 Jumbo's spirit lives on. Some of his ashes were recovered in a peanut butter jar that has remained in the athletics director’s office where students continue to rub it for good luck. "
             tools:layout_editor_absoluteX="0dp"/>
     </ScrollView>
-
-    <ImageView
-        android:id="@+id/locationImage"
-        android:layout_width="0dp"
-        android:layout_height="276dp"
-        android:scaleType="fitXY"
-        app:srcCompat="@drawable/jumbo"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        tools:layout_editor_absoluteY="0dp" />
 
 
 </android.support.constraint.ConstraintLayout>
