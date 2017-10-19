@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-
+import android.widget.TextView;
 import java.util.ArrayList;
 
 public class StartTourActivity extends AppCompatActivity {
@@ -14,9 +14,7 @@ public class StartTourActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_tour);
-
         Intent intent = getIntent();
-
         String tourType = intent.getStringExtra("tourType");
         ArrayList<Site> sites = getSites();
 
