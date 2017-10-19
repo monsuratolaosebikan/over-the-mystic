@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +35,10 @@ public class ViewAdapter extends RecyclerView.Adapter<ViewAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-//        holder.imageView.setImageResource(siteList.);
+        Glide.with(holder.imageView.getContext())
+            .load(siteList.get(position).getImageUrl())
+            .into(holder.imageView);
+
         holder.textView.setText(siteList.get(position).getName());
     }
 
