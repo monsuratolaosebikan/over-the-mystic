@@ -2,28 +2,20 @@ package org.medfordhistorical.overthemystic;
 
 import android.content.Context;
 import android.util.Log;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
-
 import io.realm.Realm;
-import io.realm.RealmAsyncTask;
-import io.realm.RealmResults;
 
 public class QueryUtils {
-    private static String URL = "http://174.138.43.181/directus/api/1.1/tables/sites/rows";
+    private static String URL = "http://174.138.43.181";
 
     private QueryUtils() {}
     static RequestQueue queue;
@@ -32,17 +24,7 @@ public class QueryUtils {
         ArrayList<Site> sites = new ArrayList<>();
         queue = Volley.newRequestQueue(context);
 
-//        Realm realm = Realm.getDefaultInstance();
-//        realm.beginTransaction();
-//        realm.deleteAll();
-//        Site site = realm.createObject(Site.class);
-//        site.setName("Tufts University");
-//        site.setShortDesc("Learn some stuff");
-//        site.setImageUrl("http://174.138.43.181/directus/storage/uploads/00000000022.jpg");
-//        realm.commitTransaction();
-//        realm.close();
-
-       JsonObjectRequest arrayRequest = new JsonObjectRequest(Request.Method.GET, URL, null, new Response.Listener<JSONObject>() {
+       JsonObjectRequest arrayRequest = new JsonObjectRequest(Request.Method.GET, URL + "/directus/api/1.1/tables/sites/rows" , null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
 
@@ -74,20 +56,24 @@ public class QueryUtils {
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm bgRealm) {
+                bgRealm.deleteAll();
                 try {
                     for (int i = 0; i < sites.length(); i++) {
                         Site site = bgRealm.createObject(Site.class);
                         JSONObject s = sites.getJSONObject(i);
                         site.setName(s.getString("name"));
-                        site.setImageUrl(s.getString("image"));
+                        JSONObject image = null;
+                        try {
+                            image = s.getJSONObject("image");
+                        } catch(JSONException j) {}
+
+                        if(image != null) {
+                            site.setImageUrl(URL + image.getJSONObject("data").getString("url"));
+                        }
+
                         site.setShortDesc(s.getString("short_description"));
                     }
-                    Realm realm = Realm.getDefaultInstance();
 
-                    RealmResults<Site> sites = realm.where(Site.class)
-                            .findAll();
-
-                    Log.d("main", sites.get(1).toString());
                 } catch(JSONException j) {
                     Log.d("save to database", j.toString());
 

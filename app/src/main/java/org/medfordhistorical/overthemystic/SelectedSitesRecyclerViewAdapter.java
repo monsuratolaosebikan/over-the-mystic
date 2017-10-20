@@ -2,11 +2,15 @@ package org.medfordhistorical.overthemystic;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
@@ -42,8 +46,15 @@ public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<Selec
         TextView nameTextView = viewHolder.nameTextView;
         nameTextView.setText(site.getName());
 
-        TextView shortDescTextView = viewHolder.shortDescTextView;
-        shortDescTextView.setText(site.getShortDesc());
+        ImageView imageView = viewHolder.imageView;
+
+        RequestOptions options = new RequestOptions();
+        options.fitCenter();
+
+        Glide.with(viewHolder.imageView.getContext())
+                .load(site.getImageUrl())
+                .apply(options)
+                .into(viewHolder.imageView);
     }
 
     @Override
@@ -54,12 +65,13 @@ public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<Selec
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView nameTextView;
         public TextView shortDescTextView;
+        public ImageView imageView;
 
         public ViewHolder(View siteView) {
             super(siteView);
 
             nameTextView = (TextView) siteView.findViewById(R.id.site_name);
-            shortDescTextView = (TextView) siteView.findViewById(R.id.site_shortDesc);
+            imageView = (ImageView) siteView.findViewById(R.id.site_image);
             siteView.setOnClickListener(this);
 
         }

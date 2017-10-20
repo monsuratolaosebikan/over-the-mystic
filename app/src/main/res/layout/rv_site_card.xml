@@ -26,9 +26,8 @@
             <ImageView
                 android:id="@+id/site_image"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ballou" />
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop" />
 
             <TextView
                 android:id="@+id/site_name"
@@ -40,15 +39,6 @@
                 android:background="@color/cardview_dark_background"
                 android:gravity="bottom"/>
         </FrameLayout>
-
-        <TextView
-            android:id="@+id/site_shortDesc"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="8dp"
-            android:textColor="@color/cardview_dark_background"
-            android:textSize="14sp"/>
 
     </LinearLayout>
 

@@ -29,6 +29,7 @@ import com.mapbox.services.commons.models.Position;
 import java.util.List;
 import java.util.ArrayList;
 
+import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -61,13 +62,15 @@ public class MapActivity extends AppCompatActivity {
             @Override
             public void onMapReady(MapboxMap mapboxMap) {
 
+                Realm realm = Realm.getDefaultInstance();
+
                 MapActivity.this.mapboxMap = mapboxMap;
 
                 mapboxMap.setMyLocationEnabled(true);
 
                 setSites();
 
-                SelectedSitesRecyclerViewAdapter adapter = new SelectedSitesRecyclerViewAdapter(sites, mapboxMap);
+                SelectedSitesRecyclerViewAdapter adapter = new SelectedSitesRecyclerViewAdapter(realm.where(Site.class).findAll(), mapboxMap);
                 LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
                 recyclerView.setLayoutManager(layoutManager);
                 recyclerView.setItemAnimator(new DefaultItemAnimator());
