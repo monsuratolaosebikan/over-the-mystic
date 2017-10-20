@@ -2,12 +2,16 @@ package org.medfordhistorical.overthemystic;
 
 import com.mapbox.mapboxsdk.geometry.LatLng;
 
-public class Site {
+import io.realm.RealmObject;
+import io.realm.annotations.Ignore;
+
+public class Site extends RealmObject {
 
     private String name;
     private String shortDesc;
     private String longDesc;
     private String imageUrl;
+    @Ignore
     private LatLng location;
 
 
