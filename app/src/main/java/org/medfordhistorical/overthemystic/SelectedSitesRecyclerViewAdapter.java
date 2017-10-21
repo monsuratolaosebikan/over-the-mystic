@@ -89,7 +89,6 @@ public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<Selec
                 map.easeCamera(CameraUpdateFactory.newCameraPosition(newCameraPosition));
                 List<Marker> markers = map.getMarkers();
                 map.selectMarker(markers.get(position));
-
             }
         }
 

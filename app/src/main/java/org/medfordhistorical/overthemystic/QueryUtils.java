@@ -16,15 +16,15 @@ import io.realm.Realm;
 
 public class QueryUtils {
     private static String URL = "http://174.138.43.181";
+    static RequestQueue queue;
 
     private QueryUtils() {}
-    static RequestQueue queue;
 
     public static ArrayList<Site> getSites(Context context) {
         ArrayList<Site> sites = new ArrayList<>();
         queue = Volley.newRequestQueue(context);
 
-       JsonObjectRequest arrayRequest = new JsonObjectRequest(Request.Method.GET, URL + "/directus/api/1.1/tables/sites/rows" , null, new Response.Listener<JSONObject>() {
+       JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, URL + "/directus/api/1.1/tables/sites/rows" , null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
 
@@ -33,7 +33,7 @@ public class QueryUtils {
                     rawSiteData = response.getJSONArray("data");
                     saveToDatabase(rawSiteData);
                 } catch (JSONException e) {
-                    Log.d("query", "to array error");
+                    Log.e("query", "to array error");
                 }
 
                 Log.d("query", rawSiteData.toString());
@@ -43,10 +43,10 @@ public class QueryUtils {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("query", error.toString());
+                Log.e("query", error.toString());
             }
         });
-        queue.add(arrayRequest);
+        queue.add(request);
         return sites;
     }
 
@@ -59,8 +59,8 @@ public class QueryUtils {
                 bgRealm.deleteAll();
                 try {
                     for (int i = 0; i < sites.length(); i++) {
-                        Site site = bgRealm.createObject(Site.class);
                         JSONObject s = sites.getJSONObject(i);
+                        Site site = bgRealm.createObject(Site.class, s.getInt("id"));
                         site.setName(s.getString("name"));
                         JSONObject image = null;
                         try {
@@ -72,22 +72,25 @@ public class QueryUtils {
                         }
 
                         site.setShortDesc(s.getString("short_description"));
+                        String location[] = s.getString("location").split(",");
+                        site.setLatitude((Double.parseDouble(location[0])));
+                        site.setLongitude((Double.parseDouble(location[1])));
                     }
 
                 } catch(JSONException j) {
-                    Log.d("save to database", j.toString());
+                    Log.e("save to database", j.toString());
 
                 }
             }
         }, new Realm.Transaction.OnSuccess() {
             @Override
             public void onSuccess() {
-            /* success actions */
+                Log.d("realm save", "success");
             }
         }, new Realm.Transaction.OnError() {
             @Override
             public void onError(Throwable error) {
-            /* failure actions */
+                Log.e("realm save", error.toString());
             }
         });
     }
