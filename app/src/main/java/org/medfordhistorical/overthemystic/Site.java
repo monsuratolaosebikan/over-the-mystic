@@ -19,6 +19,7 @@ public class Site extends RealmObject {
     private String shortDesc;
     private String longDesc;
     private String imageUrl;
+    private String audioUrl;
     private double latitude;
     private double longitude;
 
@@ -54,6 +55,14 @@ public class Site extends RealmObject {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public void setAudioUrl(String audioUrl) {
+        this.audioUrl = audioUrl;
+    }
+
+    public String getAudioUrl() {
+        return audioUrl;
     }
 
     public LatLng getLocation() {

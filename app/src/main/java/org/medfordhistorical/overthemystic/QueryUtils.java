@@ -28,16 +28,13 @@ public class QueryUtils {
             @Override
             public void onResponse(JSONObject response) {
 
-                JSONArray rawSiteData = new JSONArray();
+                JSONArray rawSiteData;
                 try {
                     rawSiteData = response.getJSONArray("data");
                     saveToDatabase(rawSiteData);
                 } catch (JSONException e) {
                     Log.e("query", "to array error");
                 }
-
-                Log.d("query", rawSiteData.toString());
-
             }
         }, new Response.ErrorListener() {
 
@@ -62,6 +59,7 @@ public class QueryUtils {
                         JSONObject s = sites.getJSONObject(i);
                         Site site = bgRealm.createObject(Site.class, s.getInt("id"));
                         site.setName(s.getString("name"));
+
                         JSONObject image = null;
                         try {
                             image = s.getJSONObject("image");
@@ -69,6 +67,15 @@ public class QueryUtils {
 
                         if(image != null) {
                             site.setImageUrl(URL + image.getJSONObject("data").getString("url"));
+                        }
+
+                        JSONObject audio = null;
+                        try {
+                            audio = s.getJSONObject("audio");
+                        } catch(JSONException j) {}
+
+                        if(audio != null) {
+                            site.setAudioUrl(URL + audio.getJSONObject("data").getString("url"));
                         }
 
                         site.setShortDesc(s.getString("short_description"));

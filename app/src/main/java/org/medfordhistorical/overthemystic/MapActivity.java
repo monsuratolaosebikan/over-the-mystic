@@ -51,6 +51,7 @@ public class MapActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Mapbox.getInstance(this, ACCESS_TOKEN);
         setContentView(R.layout.activity_map);
+        setTitle("Start Navigation");
 
         recyclerView = (RecyclerView) findViewById(R.id.rvSite);
 
@@ -62,13 +63,10 @@ public class MapActivity extends AppCompatActivity {
             @Override
             public void onMapReady(MapboxMap mapboxMap) {
 
-//                Realm realm = Realm.getDefaultInstance();
-
                 MapActivity.this.mapboxMap = mapboxMap;
-
                 mapboxMap.setMyLocationEnabled(true);
 
-                setSites(mapboxMap);
+                setSites();
 
                 SelectedSitesRecyclerViewAdapter adapter = new SelectedSitesRecyclerViewAdapter(sites, mapboxMap);
                 LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
@@ -130,7 +128,7 @@ public class MapActivity extends AppCompatActivity {
         mapView.onSaveInstanceState(outState);
     }
 
-    public void setSites(MapboxMap mapboxMap) {
+    public void setSites() {
         Realm realm = Realm.getDefaultInstance();
         sites = realm.where(Site.class).findAll();
 

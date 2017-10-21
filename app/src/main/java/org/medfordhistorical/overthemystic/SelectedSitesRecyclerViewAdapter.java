@@ -1,6 +1,8 @@
 package org.medfordhistorical.overthemystic;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +24,7 @@ import java.util.List;
 public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<SelectedSitesRecyclerViewAdapter.ViewHolder> {
     private List<Site> sites;
     public MapboxMap map;
+    private Context context;
 
     public SelectedSitesRecyclerViewAdapter(List<Site> sites, MapboxMap map) {
         this.sites = sites;
@@ -31,7 +34,7 @@ public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<Selec
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Context context = parent.getContext();
+        context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
         View siteView = inflater.inflate(R.layout.rv_site_card, parent, false);
@@ -46,14 +49,13 @@ public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<Selec
         TextView nameTextView = viewHolder.nameTextView;
         nameTextView.setText(site.getName());
 
-        ImageView imageView = viewHolder.imageView;
+        FloatingActionButton navigateBtn = viewHolder.navigateBtn;
 
-        RequestOptions options = new RequestOptions();
-        options.fitCenter();
+        ImageView imageView = viewHolder.imageView;
 
         Glide.with(viewHolder.imageView.getContext())
                 .load(site.getImageUrl())
-                .apply(options)
+                .apply(new RequestOptions().fitCenter())
                 .into(viewHolder.imageView);
     }
 
@@ -63,15 +65,31 @@ public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<Selec
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView nameTextView;
+        private TextView nameTextView;
         public TextView shortDescTextView;
-        public ImageView imageView;
+        private ImageView imageView;
+        private FloatingActionButton navigateBtn;
 
         public ViewHolder(View siteView) {
             super(siteView);
 
             nameTextView = (TextView) siteView.findViewById(R.id.site_name);
             imageView = (ImageView) siteView.findViewById(R.id.site_image);
+            navigateBtn = (FloatingActionButton) siteView.findViewById(R.id.navigate);
+            navigateBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(context, ViewLocationDetail.class);
+                    int position = getAdapterPosition();
+                    intent.putExtra("siteId", sites.get(position).getId());
+                    intent.putExtra("siteName", sites.get(position).getName());
+                    intent.putExtra("siteDesc", sites.get(position).getShortDesc());
+                    intent.putExtra("imageUrl", sites.get(position).getImageUrl());
+                    intent.putExtra("audioUrl", sites.get(position).getAudioUrl());
+
+                    context.startActivity(intent);
+                }
+            });
             siteView.setOnClickListener(this);
 
         }
