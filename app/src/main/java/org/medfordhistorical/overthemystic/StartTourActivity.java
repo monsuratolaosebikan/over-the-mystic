@@ -1,9 +1,11 @@
 package org.medfordhistorical.overthemystic;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.view.View;
 import android.widget.TextView;
 import java.util.ArrayList;
 
@@ -14,8 +16,19 @@ public class StartTourActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_tour);
+        setTitle("New Tour");
         Intent intent = getIntent();
         String tourType = intent.getStringExtra("tourType");
+
+        FloatingActionButton goToMapBtn = (FloatingActionButton) findViewById(R.id.go_to_map_btn);
+        goToMapBtn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(StartTourActivity.this, MapActivity.class);
+                startActivity(intent);
+            }
+        });
+
         ArrayList<Site> sites = getSites();
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler);

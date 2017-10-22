@@ -1,6 +1,8 @@
 package org.medfordhistorical.overthemystic;
-import com.mapbox.mapboxsdk.geometry.LatLng;
 
+import com.mapbox.mapboxsdk.geometry.LatLng;
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * The SiteItem class holds all the information about each of the historical sites.
@@ -8,14 +10,20 @@ import com.mapbox.mapboxsdk.geometry.LatLng;
  * about the site.
  */
 
-public class Site {
+public class Site extends RealmObject {
+
+    @PrimaryKey
+    private int id;
 
     private String name;
     private String shortDesc;
     private String longDesc;
     private String imageUrl;
-    private LatLng location;
+    private String audioUrl;
+    private double latitude;
+    private double longitude;
 
+    public int getId() { return this.id; }
 
     public String getName() {
         return name;
@@ -49,11 +57,32 @@ public class Site {
         this.imageUrl = imageUrl;
     }
 
-    public LatLng getLocation() {
-        return location;
+    public void setAudioUrl(String audioUrl) {
+        this.audioUrl = audioUrl;
     }
 
-    public void setLocation(LatLng location) {
-        this.location = location;
+    public String getAudioUrl() {
+        return audioUrl;
+    }
+
+    public LatLng getLocation() {
+
+        return new LatLng(this.latitude, this.longitude);
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
     }
 }

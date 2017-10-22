@@ -40,6 +40,7 @@ import com.mapbox.services.commons.models.Position;
 import java.util.List;
 import java.util.ArrayList;
 
+import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -66,6 +67,7 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
         super.onCreate(savedInstanceState);
         Mapbox.getInstance(this, ACCESS_TOKEN);
         setContentView(R.layout.activity_map);
+        setTitle("Start Navigation");
 
         recyclerView = (RecyclerView) findViewById(R.id.rvSite);
 
@@ -113,38 +115,15 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
     }
 
     public void setSites() {
-        sites = new ArrayList<>();
+        Realm realm = Realm.getDefaultInstance();
+        sites = realm.where(Site.class).findAll();
 
-        LatLng[] locations = new LatLng[] {
-                new LatLng(42.40742, -71.12012),
-                new LatLng(42.40678, -71.11652),
-                new LatLng(42.40817, -71.11375),
-                new LatLng(42.40909, -71.1154),
-                new LatLng(42.41235, -71.11163),
-                new LatLng(42.41312, -71.11096),
-                new LatLng(42.41679, -71.11527)
-        };
-
-        String[] locationNames = new String[]{ "Ballou Hall", "Mystic River",
-                "Tufts University", "Tisch Library", "Women's Center", "Tufts Park",
-                "Stearns Street" };
-
-        for (int i = 0; i < locations.length; i++) {
-            Site site = new Site();
-            site.setName(i + 1 +  ". " + locationNames[i]);
-            site.setShortDesc(
-                    "Ballou Hall is a historic academic building on the campus of" +
-                            " Tufts University in Medford, Massachusetts.  "
-            );
-            site.setLocation(locations[i]);
-            sites.add(site);
-
+        for (int i = 0; i < sites.size(); i++) {
             mapboxMap.addMarker(new MarkerOptions()
-                    .position(locations[i])
-                    .title(locationNames[i])
-                    .snippet("Welcome jumbos!"));
+                      .position(sites.get(i).getLocation())
+                      .title(sites.get(i).getName()));
 
-            getRoute(locations, "bike");
+//            getRoute(locations, "bike");
         }
     }
 
@@ -343,5 +322,4 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
     }
-
 }
