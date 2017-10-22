@@ -129,8 +129,7 @@ public class MapActivity extends AppCompatActivity {
     }
 
     public void setSites() {
-        Realm realm = Realm.getDefaultInstance();
-        sites = realm.where(Site.class).findAll();
+        sites = QueryUtils.getSitesFromDatabase();
 
         for (int i = 0; i < sites.size(); i++) {
             mapboxMap.addMarker(new MarkerOptions()
