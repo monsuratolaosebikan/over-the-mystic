@@ -82,10 +82,11 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
                 MapActivity.this.mapboxMap = mapboxMap;
 
                 enableLocationPlugin();
+                mapboxMap.setMyLocationEnabled(true);
 
                 setSites();
 
-                SelectedSitesRecyclerViewAdapter adapter = new SelectedSitesRecyclerViewAdapter(sites, mapboxMap);
+                SelectedSitesRecyclerViewAdapter adapter = new SelectedSitesRecyclerViewAdapter(sites, mapboxMap, mapView);
                 LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
                 recyclerView.setLayoutManager(layoutManager);
                 recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -116,37 +117,41 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
 
     public void setSites() {
         Realm realm = Realm.getDefaultInstance();
-        sites = realm.where(Site.class).findAll();
+        sites = realm.copyFromRealm(realm.where(Site.class).findAll());
 
         for (int i = 0; i < sites.size(); i++) {
             mapboxMap.addMarker(new MarkerOptions()
                       .position(sites.get(i).getLocation())
                       .title(sites.get(i).getName()));
 
-//            getRoute(locations, "bike");
+            getRoute("bike");
         }
     }
 
-    public void getRoute(LatLng[] locations, String method) {
+    public void getRoute(String method) {
 
         String profile;
 
         if (method.toLowerCase().equals("bike")) profile = DirectionsCriteria.PROFILE_WALKING;
         else  profile = DirectionsCriteria.PROFILE_CYCLING;
 
+        if (originLocation == null)
+            enableLocationPlugin();
+
+        Position origin = Position.fromCoordinates(originLocation.getLongitude(), originLocation.getLatitude());
 
         List<Position> coordinates = new ArrayList<>();
 
-        for (int i = 0; i < locations.length; i++) {
-            Position coordinate = Position.fromCoordinates(locations[i].getLongitude(), locations[i].getLatitude());
+        for (int i = 0; i < sites.size(); i++) {
+            Position coordinate = Position.fromCoordinates(sites.get(i).getLongitude(), sites.get(i).getLatitude());
             coordinates.add(coordinate);
         }
 
         NavigationRoute.Builder navigationRouteBuilder = NavigationRoute.builder()
                 .accessToken(Mapbox.getAccessToken())
                 .profile(profile)
-                .origin(coordinates.get(0))
-                .destination(coordinates.get(coordinates.size()-1));
+                .origin(origin)
+                .destination(origin);
 
         for (int index = 1; index < coordinates.size(); index++) {
             navigationRouteBuilder.addWaypoint(coordinates.get(index));

@@ -17,18 +17,23 @@ import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
+import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
+import com.mapbox.services.commons.models.Position;
 
 import java.util.List;
 
 public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<SelectedSitesRecyclerViewAdapter.ViewHolder> {
     private List<Site> sites;
-    public MapboxMap map;
+    private MapboxMap map;
+    private MapView mapView;
     private Context context;
 
-    public SelectedSitesRecyclerViewAdapter(List<Site> sites, MapboxMap map) {
+    public SelectedSitesRecyclerViewAdapter(List<Site> sites, MapboxMap map, MapView mapView) {
         this.sites = sites;
         this.map = map;
+        this.mapView = mapView;
     }
 
 
@@ -70,7 +75,7 @@ public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<Selec
         private ImageView imageView;
         private FloatingActionButton navigateBtn;
 
-        public ViewHolder(View siteView) {
+        public ViewHolder(final View siteView) {
             super(siteView);
 
             nameTextView = (TextView) siteView.findViewById(R.id.site_name);
@@ -86,8 +91,35 @@ public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<Selec
                     intent.putExtra("siteDesc", sites.get(position).getShortDesc());
                     intent.putExtra("imageUrl", sites.get(position).getImageUrl());
                     intent.putExtra("audioUrl", sites.get(position).getAudioUrl());
+                    Log.d("location", map.getMyLocation().toString());
 
-                    context.startActivity(intent);
+                    double longitude = sites.get(position).getLongitude();
+                    double latitude = sites.get(position).getLatitude();
+                    Position origin = Position.fromCoordinates(map.getMyLocation().getLongitude(), map.getMyLocation().getLatitude());
+                    Position destination = Position.fromCoordinates(longitude, latitude);
+
+                    boolean simulateRoute = true;
+                    MapActivity activity;
+
+                    //hacky, switch to use interface
+                    try {
+                        activity = (MapActivity) view.getContext();
+                        if(origin != null) {
+                            sites.remove(position);
+                            notifyItemRemoved(position);
+                            notifyItemRangeChanged(position, sites.size());
+                            NavigationLauncher.startNavigation(activity, origin, destination, null, simulateRoute);
+                        }
+                    } catch (Exception e) {
+                        Log.d("location error", e.toString());
+
+                    }
+
+//                    if(origin != null) {
+//                        NavigationLauncher.startNavigation(activity, origin, destination, null, simulateRoute);
+//                    }
+
+//                    context.startActivity(intent);
                 }
             });
             siteView.setOnClickListener(this);
