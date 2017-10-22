@@ -23,6 +23,8 @@ public class Site extends RealmObject {
     private double latitude;
     private double longitude;
 
+    public void setId(int id) { this.id = id; }
+
     public int getId() { return this.id; }
 
     public String getName() {

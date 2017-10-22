@@ -12,6 +12,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
+import java.util.List;
+
 import io.realm.Realm;
 
 public class QueryUtils {
@@ -20,11 +22,10 @@ public class QueryUtils {
 
     private QueryUtils() {}
 
-    public static ArrayList<Site> getSites(Context context) {
-        ArrayList<Site> sites = new ArrayList<>();
+    public static void getSitesFromServer(Context context) {
         queue = Volley.newRequestQueue(context);
 
-       JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, URL + "/directus/api/1.1/tables/sites/rows" , null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, URL + "/directus/api/1.1/tables/sites/rows" , null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
 
@@ -44,7 +45,16 @@ public class QueryUtils {
             }
         });
         queue.add(request);
-        return sites;
+    }
+
+    public static List<Site> getSitesFromDatabase() {
+        Realm realm = Realm.getDefaultInstance();
+        return realm.where(Site.class).findAll();
+    }
+
+    public static Site getSiteFromDatabase(int id) {
+        Realm realm = Realm.getDefaultInstance();
+        return realm.where(Site.class).equalTo("id", id).findFirst();
     }
 
     private static void saveToDatabase(final JSONArray sites) {
@@ -53,12 +63,12 @@ public class QueryUtils {
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm bgRealm) {
-                bgRealm.deleteAll();
                 try {
                     for (int i = 0; i < sites.length(); i++) {
                         JSONObject s = sites.getJSONObject(i);
-                        Site site = bgRealm.createObject(Site.class, s.getInt("id"));
+                        Site site = new Site();
                         site.setName(s.getString("name"));
+                        site.setId(s.getInt("id"));
 
                         JSONObject image = null;
                         try {
@@ -82,6 +92,7 @@ public class QueryUtils {
                         String location[] = s.getString("location").split(",");
                         site.setLatitude((Double.parseDouble(location[0])));
                         site.setLongitude((Double.parseDouble(location[1])));
+                        bgRealm.copyToRealmOrUpdate(site);
                     }
 
                 } catch(JSONException j) {

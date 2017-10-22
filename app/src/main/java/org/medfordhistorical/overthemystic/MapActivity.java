@@ -117,7 +117,7 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
 
     public void setSites() {
         Realm realm = Realm.getDefaultInstance();
-        sites = realm.copyFromRealm(realm.where(Site.class).findAll());
+        sites = realm.copyFromRealm(QueryUtils.getSitesFromDatabase());
 
         for (int i = 0; i < sites.size(); i++) {
             mapboxMap.addMarker(new MarkerOptions()
