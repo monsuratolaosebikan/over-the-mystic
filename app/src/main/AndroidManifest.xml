@@ -34,7 +34,11 @@
         </activity>
         <activity android:name=".NavigationActivity"></activity>
         <activity android:name=".ViewLocationDetail"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:parentActivityName=".MapActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MapActivity" />
         </activity>
 
         <activity android:name=".MapActivity"
