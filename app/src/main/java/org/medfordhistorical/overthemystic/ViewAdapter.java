@@ -2,6 +2,7 @@ package org.medfordhistorical.overthemystic;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.ImageView;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import java.util.List;
 public class ViewAdapter extends RecyclerView.Adapter<ViewAdapter.ViewHolder> {
     private Context context;
     private ArrayList<Site> siteList;
+    private ArrayList<Site> sitesSelected = new ArrayList<Site>();
 
     public ViewAdapter(Context context, ArrayList<Site> sites) {
         this.context = context;
@@ -61,15 +63,26 @@ public class ViewAdapter extends RecyclerView.Adapter<ViewAdapter.ViewHolder> {
             itemView.setOnClickListener(this);
         }
 
+        //Store which sites were selected, and change the image effects to show it
+        private int count = 0;
         @Override
         public void onClick(View view){
+            count++;
             int position = getAdapterPosition();
             if (position != RecyclerView.NO_POSITION) {
                 String name = siteList.get(position).getName();
-                Toast.makeText(context, name, Toast.LENGTH_SHORT).show();
+                sitesSelected.add(siteList.get(position));
+                Toast.makeText(context, "added "+ name, Toast.LENGTH_SHORT).show();
+                getSelections();
             }
 
         }
+
+        public ArrayList<Site> getSelections(){
+            Log.d("getSelection: ", sitesSelected.size()+"");
+            return sitesSelected;
+        }
+
 
     }
 
