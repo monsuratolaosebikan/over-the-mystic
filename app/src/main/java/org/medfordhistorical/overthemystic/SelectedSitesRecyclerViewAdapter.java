@@ -1,12 +1,18 @@
 package org.medfordhistorical.overthemystic;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
@@ -18,6 +24,7 @@ import java.util.List;
 public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<SelectedSitesRecyclerViewAdapter.ViewHolder> {
     private List<Site> sites;
     public MapboxMap map;
+    private Context context;
 
     public SelectedSitesRecyclerViewAdapter(List<Site> sites, MapboxMap map) {
         this.sites = sites;
@@ -27,7 +34,7 @@ public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<Selec
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Context context = parent.getContext();
+        context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
         View siteView = inflater.inflate(R.layout.rv_site_card, parent, false);
@@ -42,8 +49,14 @@ public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<Selec
         TextView nameTextView = viewHolder.nameTextView;
         nameTextView.setText(site.getName());
 
-        TextView shortDescTextView = viewHolder.shortDescTextView;
-        shortDescTextView.setText(site.getShortDesc());
+        FloatingActionButton navigateBtn = viewHolder.navigateBtn;
+
+        ImageView imageView = viewHolder.imageView;
+
+        Glide.with(viewHolder.imageView.getContext())
+                .load(site.getImageUrl())
+                .apply(new RequestOptions().fitCenter())
+                .into(viewHolder.imageView);
     }
 
     @Override
@@ -52,14 +65,31 @@ public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<Selec
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView nameTextView;
+        private TextView nameTextView;
         public TextView shortDescTextView;
+        private ImageView imageView;
+        private FloatingActionButton navigateBtn;
 
         public ViewHolder(View siteView) {
             super(siteView);
 
             nameTextView = (TextView) siteView.findViewById(R.id.site_name);
-            shortDescTextView = (TextView) siteView.findViewById(R.id.site_shortDesc);
+            imageView = (ImageView) siteView.findViewById(R.id.site_image);
+            navigateBtn = (FloatingActionButton) siteView.findViewById(R.id.navigate);
+            navigateBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(context, ViewLocationDetail.class);
+                    int position = getAdapterPosition();
+                    intent.putExtra("siteId", sites.get(position).getId());
+                    intent.putExtra("siteName", sites.get(position).getName());
+                    intent.putExtra("siteDesc", sites.get(position).getShortDesc());
+                    intent.putExtra("imageUrl", sites.get(position).getImageUrl());
+                    intent.putExtra("audioUrl", sites.get(position).getAudioUrl());
+
+                    context.startActivity(intent);
+                }
+            });
             siteView.setOnClickListener(this);
 
         }
@@ -77,7 +107,6 @@ public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<Selec
                 map.easeCamera(CameraUpdateFactory.newCameraPosition(newCameraPosition));
                 List<Marker> markers = map.getMarkers();
                 map.selectMarker(markers.get(position));
-
             }
         }
 
