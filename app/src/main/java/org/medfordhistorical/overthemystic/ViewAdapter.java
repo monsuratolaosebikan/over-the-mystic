@@ -3,6 +3,7 @@ package org.medfordhistorical.overthemystic;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.widget.TextView;
 import android.widget.ImageView;
 import android.view.LayoutInflater;
@@ -19,13 +20,13 @@ import java.util.List;
 //recycle view adapter that will use layout for each item
 public class ViewAdapter extends RecyclerView.Adapter<ViewAdapter.ViewHolder> {
     private Context context;
-    private ArrayList<Site> siteList;
-    private ArrayList<Site> sitesSelected = new ArrayList<Site>();
+    private List<Site> siteList;
 
-    public ViewAdapter(Context context, ArrayList<Site> sites) {
+    public ViewAdapter(Context context, List<Site> sites) {
         this.context = context;
         this.siteList = sites;
     }
+
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -71,20 +72,23 @@ public class ViewAdapter extends RecyclerView.Adapter<ViewAdapter.ViewHolder> {
             int position = getAdapterPosition();
             if (position != RecyclerView.NO_POSITION) {
                 String name = siteList.get(position).getName();
-                sitesSelected.add(siteList.get(position));
+//                sitesSelected.add(siteList.get(position));
                 Toast.makeText(context, "added "+ name, Toast.LENGTH_SHORT).show();
-                getSelections();
+//                getSelections();
             }
 
         }
 
-        public ArrayList<Site> getSelections(){
-            Log.d("getSelection: ", sitesSelected.size()+"");
-            return sitesSelected;
-        }
-
-
     }
+
+
+
+
+//        public ArrayList<Site> getSelections(){
+//            Log.d("getSelection: ", sitesSelected.size()+"");
+//            return sitesSelected;
+//        }
+
 
 }
 
