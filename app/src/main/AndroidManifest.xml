@@ -42,6 +42,7 @@
         </activity>
 
         <activity android:name=".MapActivity"
+            android:launchMode="singleTop"
             android:parentActivityName=".StartTourActivity"
             android:screenOrientation="portrait">
             <!-- The meta-data tag is required if you support API level 15 and lower -->

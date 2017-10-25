@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 public class StartTourActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
+    ArrayList<Site> siteList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,9 +26,12 @@ public class StartTourActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(StartTourActivity.this, MapActivity.class);
+                int[] ids =  {7,8,4,10};
+                intent.putExtra("siteIds",ids);
                 startActivity(intent);
             }
         });
+
 
         ArrayList<Site> sites = getSites();
 
@@ -38,7 +42,7 @@ public class StartTourActivity extends AppCompatActivity {
     }
 
     public ArrayList<Site> getSites(){
-        ArrayList<Site> siteList = new ArrayList<Site>();
+        siteList = new ArrayList<Site>();
 
         String[] imgList = {"https://c1.staticflickr.com/1/133/386986339_48fec1ff5b.jpg",
                 "https://res.cloudinary.com/simpleview/image/fetch/c_fill,f_auto,h_346,q_50,w_461/https://SouthwestOntario.simpleviewcrm.com/images/listings/original_Jumbo_The_Elephant_Monument_1.jpg",

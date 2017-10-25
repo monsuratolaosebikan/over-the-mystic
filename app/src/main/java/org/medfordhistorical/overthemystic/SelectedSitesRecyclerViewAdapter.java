@@ -27,13 +27,11 @@ import java.util.List;
 public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<SelectedSitesRecyclerViewAdapter.ViewHolder> {
     private List<Site> sites;
     private MapboxMap map;
-    private MapView mapView;
     private Context context;
 
-    public SelectedSitesRecyclerViewAdapter(List<Site> sites, MapboxMap map, MapView mapView) {
+    public SelectedSitesRecyclerViewAdapter(List<Site> sites, MapboxMap map) {
         this.sites = sites;
         this.map = map;
-        this.mapView = mapView;
     }
 
 
@@ -71,7 +69,6 @@ public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<Selec
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView nameTextView;
-        public TextView shortDescTextView;
         private ImageView imageView;
         private FloatingActionButton navigateBtn;
 
@@ -91,7 +88,6 @@ public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<Selec
                     intent.putExtra("siteDesc", sites.get(position).getShortDesc());
                     intent.putExtra("imageUrl", sites.get(position).getImageUrl());
                     intent.putExtra("audioUrl", sites.get(position).getAudioUrl());
-                    Log.d("location", map.getMyLocation().toString());
 
                     double longitude = sites.get(position).getLongitude();
                     double latitude = sites.get(position).getLatitude();
@@ -108,18 +104,13 @@ public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<Selec
                             sites.remove(position);
                             notifyItemRemoved(position);
                             notifyItemRangeChanged(position, sites.size());
+                            context.startActivity(intent);
                             NavigationLauncher.startNavigation(activity, origin, destination, null, simulateRoute);
+
                         }
                     } catch (Exception e) {
-                        Log.d("location error", e.toString());
-
+                        Log.e("location error", e.toString());
                     }
-
-//                    if(origin != null) {
-//                        NavigationLauncher.startNavigation(activity, origin, destination, null, simulateRoute);
-//                    }
-
-//                    context.startActivity(intent);
                 }
             });
             siteView.setOnClickListener(this);

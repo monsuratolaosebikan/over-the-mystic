@@ -1,5 +1,6 @@
 package org.medfordhistorical.overthemystic;
 
+import android.content.Intent;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -10,9 +11,6 @@ import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
@@ -55,22 +53,28 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
     private PermissionsManager permissionsManager;
     private LocationLayerPlugin locationPlugin;
     private LocationEngine locationEngine;
+    private SelectedSitesRecyclerViewAdapter adapter;
     private RecyclerView recyclerView;
     private List<Site> sites;
+    private int[] siteIds;
     private DirectionsRoute currentRoute;
     private NavigationMapRoute navigationMapRoute;
     private String ACCESS_TOKEN = "pk.eyJ1IjoibWVkZm9yZGhpc3RvcmljYWwiLCJhIjoiY2o4ZXNiNHN2M" +
             "TZycjMzb2ttcWp0dDJ1aiJ9.zt52s3jkwqtDc1I2Fv5cJg";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Mapbox.getInstance(this, ACCESS_TOKEN);
         setContentView(R.layout.activity_map);
         setTitle("Start Navigation");
 
-        recyclerView = (RecyclerView) findViewById(R.id.rvSite);
+        sites = new ArrayList<>();
 
+        Intent intent = getIntent();
+        siteIds = intent.getIntArrayExtra("siteIds");
+
+        recyclerView = (RecyclerView) findViewById(R.id.rvSite);
         mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
 
@@ -84,9 +88,9 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
                 enableLocationPlugin();
                 mapboxMap.setMyLocationEnabled(true);
 
-                setSites();
+                setSites(siteIds);
 
-                SelectedSitesRecyclerViewAdapter adapter = new SelectedSitesRecyclerViewAdapter(sites, mapboxMap, mapView);
+                adapter = new SelectedSitesRecyclerViewAdapter(sites, mapboxMap);
                 LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
                 recyclerView.setLayoutManager(layoutManager);
                 recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -97,27 +101,17 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
         });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.map_activity_actions, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_navigate:
-                startNavigation();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    public void setSites() {
+    public void setSites(int[] siteIds) {
         Realm realm = Realm.getDefaultInstance();
-        sites = realm.copyFromRealm(QueryUtils.getSitesFromDatabase());
+
+        if(siteIds == null) {
+            sites = realm.copyFromRealm(QueryUtils.getSitesFromDatabase());
+        }
+        else {
+            for(int i = 0; i < siteIds.length; i++) {
+                sites.add(realm.copyFromRealm(QueryUtils.getSiteFromDatabase(siteIds[i])));
+            }
+        }
 
         for (int i = 0; i < sites.size(); i++) {
             mapboxMap.addMarker(new MarkerOptions()
@@ -131,6 +125,8 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
     public void getRoute(String method) {
 
         String profile;
+        List<Position> coordinates = new ArrayList<>();
+        Position origin, destination;
 
         if (method.toLowerCase().equals("bike")) profile = DirectionsCriteria.PROFILE_WALKING;
         else  profile = DirectionsCriteria.PROFILE_CYCLING;
@@ -138,12 +134,15 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
         if (originLocation == null)
             enableLocationPlugin();
 
-        Position origin = Position.fromCoordinates(originLocation.getLongitude(), originLocation.getLatitude());
+        origin = Position.fromCoordinates(originLocation.getLongitude(),
+                                                   originLocation.getLatitude());
 
-        List<Position> coordinates = new ArrayList<>();
+        destination = Position.fromCoordinates(sites.get(sites.size()-1).getLongitude(),
+                                                        sites.get(sites.size()-1).getLatitude());
 
         for (int i = 0; i < sites.size(); i++) {
-            Position coordinate = Position.fromCoordinates(sites.get(i).getLongitude(), sites.get(i).getLatitude());
+            Position coordinate = Position.fromCoordinates(sites.get(i).getLongitude(),
+                                                           sites.get(i).getLatitude());
             coordinates.add(coordinate);
         }
 
@@ -151,7 +150,7 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
                 .accessToken(Mapbox.getAccessToken())
                 .profile(profile)
                 .origin(origin)
-                .destination(origin);
+                .destination(destination);
 
         for (int index = 1; index < coordinates.size(); index++) {
             navigationRouteBuilder.addWaypoint(coordinates.get(index));
@@ -320,11 +319,5 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
     protected void onPause() {
         super.onPause();
         mapView.onPause();
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        mapView.onSaveInstanceState(outState);
     }
 }
