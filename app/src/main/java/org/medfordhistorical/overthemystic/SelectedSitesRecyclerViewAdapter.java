@@ -91,8 +91,6 @@ public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<Selec
 
                     double longitude = sites.get(position).getLongitude();
                     double latitude = sites.get(position).getLatitude();
-                    Position origin = Position.fromCoordinates(map.getMyLocation().getLongitude(), map.getMyLocation().getLatitude());
-                    Position destination = Position.fromCoordinates(longitude, latitude);
 
                     boolean simulateRoute = true;
                     MapActivity activity;
@@ -100,11 +98,15 @@ public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<Selec
                     //hacky, switch to use interface
                     try {
                         activity = (MapActivity) view.getContext();
+                        Position origin = Position.fromCoordinates(activity.originLocation.getLongitude(),activity.originLocation.getLatitude());
+                        Position destination = Position.fromCoordinates(longitude, latitude);
+
                         if(origin != null) {
                             sites.remove(position);
                             notifyItemRemoved(position);
                             notifyItemRangeChanged(position, sites.size());
                             context.startActivity(intent);
+
                             NavigationLauncher.startNavigation(activity, origin, destination, null, simulateRoute);
 
                         }

@@ -49,7 +49,7 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
 
     private MapboxMap mapboxMap;
     private MapView mapView;
-    private Location originLocation;
+    public Location originLocation;
     private PermissionsManager permissionsManager;
     private LocationLayerPlugin locationPlugin;
     private LocationEngine locationEngine;
@@ -86,7 +86,6 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
                 MapActivity.this.mapboxMap = mapboxMap;
 
                 enableLocationPlugin();
-                mapboxMap.setMyLocationEnabled(true);
 
                 setSites(siteIds);
 
@@ -152,7 +151,7 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
                 .origin(origin)
                 .destination(destination);
 
-        for (int index = 1; index < coordinates.size(); index++) {
+        for (int index = 0; index < coordinates.size(); index++) {
             navigationRouteBuilder.addWaypoint(coordinates.get(index));
         }
 
