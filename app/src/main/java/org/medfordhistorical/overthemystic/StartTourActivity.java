@@ -44,8 +44,8 @@ public class StartTourActivity extends AppCompatActivity {
         goToMapBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-//                Intent intent = new Intent(StartTourActivity.this, MapActivity.class);
-//                intent.putExtra("siteIds", adapter.getSitesSelected());
+                Intent intent = new Intent(StartTourActivity.this, MapActivity.class);
+                intent.putExtra("siteIds", adapter.getSitesSelected());
                 startActivity(intent);
             }
         });

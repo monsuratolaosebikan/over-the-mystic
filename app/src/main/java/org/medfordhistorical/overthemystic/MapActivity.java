@@ -27,6 +27,7 @@ import com.mapbox.services.api.directions.v5.models.DirectionsRoute;
 import com.mapbox.services.commons.geojson.LineString;
 import com.mapbox.services.commons.models.Position;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -53,9 +54,9 @@ public class MapActivity extends AppCompatActivity {
         Mapbox.getInstance(this, ACCESS_TOKEN);
         setContentView(R.layout.activity_map);
         setTitle("Start Navigation");
-//        Intent intent = getIntent();
-//        int[] sitesSelected = intent.getIntArrayExtra("siteIds");
-//        Log.d("sites selected", sitesSelected.toString());
+        Intent intent = getIntent();
+        int[] sitesSelected = intent.getIntArrayExtra("siteIds");
+        Log.d("sites selected", Arrays.toString(sitesSelected));
 
         recyclerView = (RecyclerView) findViewById(R.id.rvSite);
 
