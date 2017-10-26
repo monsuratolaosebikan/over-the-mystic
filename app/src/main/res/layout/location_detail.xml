@@ -1,55 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="org.medfordhistorical.overthemystic.ViewLocationDetail">
+    android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/locationImage"
-        android:layout_width="0dp"
-        android:layout_height="276dp"
-        android:scaleType="fitXY"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteY="0dp" />
+    <LinearLayout android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <Button
+        <LinearLayout android:id="@+id/viewA"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/locationImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY" />
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/viewB"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:orientation="horizontal">
+            <ScrollView
+                android:id="@+id/scrolltext"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical"
+                android:paddingBottom="0dp"
+                android:fillViewport="true">
+
+                <TextView
+                    android:id="@+id/locationDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:paddingBottom="50dp" />
+            </ScrollView>
+        </LinearLayout>
+
+
+    </LinearLayout>
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/play"
-        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="visible"
-        android:text="Start Streaming"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/locationImage"
-        app:layout_constraintVertical_bias="0.645" />
-
-    <ScrollView
-        android:id="@+id/scrolltext"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        app:layout_constraintHeight_default="wrap"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/play"
-        android:layout_marginTop="20dp"
-        app:layout_constraintHorizontal_bias="0.813">
-        <TextView
-            android:id="@+id/locationDescription"
-            android:layout_width="wrap_content"
-            android:layout_height="155dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:text="For 86 years, Jumbo stood in Barnum Hall and was a veritable mecca on campus. Students, parents and other campus visitors would pop pennies in his trunk or give a tug on his tail to bring luck for an upcoming exam or athletic competition. Jumbo mania came to a fiery end on April 14, 1975 when Barnum Hall and the beloved elephant were consumed in an electrical fire.
-
-Jumbo's spirit lives on. Some of his ashes were recovered in a peanut butter jar that has remained in the athletics director’s office where students continue to rub it for good luck. "
-            tools:layout_editor_absoluteX="0dp"/>
-    </ScrollView>
-
-
-</android.support.constraint.ConstraintLayout>
+        android:layout_margin="16dp"
+        android:clickable="true"
+        app:fabSize="normal"
+        app:layout_anchor="@id/viewA"
+        app:layout_anchorGravity="bottom|right|end"
+        app:srcCompat="@drawable/ic_action_play"
+        android:drawable="@color/primaryColor" />
+</android.support.design.widget.CoordinatorLayout>
