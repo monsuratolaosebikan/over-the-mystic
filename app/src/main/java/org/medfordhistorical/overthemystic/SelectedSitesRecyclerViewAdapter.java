@@ -2,7 +2,6 @@ package org.medfordhistorical.overthemystic;
 
 import android.content.Context;
 import android.content.Intent;
-/*import android.support.design.widget.FloatingActionButton;*/
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -54,6 +53,8 @@ public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<Selec
 
         FloatingActionMenu navigateBtn = viewHolder.navigateBtn;
         navigateBtn.bringToFront();
+        navigateBtn.setIconAnimated(false);
+        navigateBtn.getMenuIconView().setImageResource(R.drawable.ic_action_navigate);
 
         ImageView imageView = viewHolder.imageView;
 

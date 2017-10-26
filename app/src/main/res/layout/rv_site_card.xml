@@ -13,16 +13,6 @@
     android:layout_marginLeft="8dp"
     android:layout_marginRight="8dp">
 
-    <!--<android.support.design.widget.FloatingActionButton
-        android:id="@+id/navigate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        card_view:fabSize="mini"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        card_view:srcCompat="@drawable/ic_action_navigate" />-->
-
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/navigate"
         android:layout_width="match_parent"
