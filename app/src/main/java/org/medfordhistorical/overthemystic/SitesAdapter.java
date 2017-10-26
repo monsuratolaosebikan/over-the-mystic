@@ -67,7 +67,11 @@ public class SitesAdapter extends BaseAdapter {
         if(site.isSelected()) {
             overlay.setVisibility(View.VISIBLE);
             Integer id = siteList.get(position).getId();
-            sitesSelected.add(id);
+
+            if(!sitesSelected.contains(id)) {
+                Log.d("changing to visible", id.toString());
+                sitesSelected.add(id);
+            }
         }
         else {
             overlay.setVisibility(View.INVISIBLE);

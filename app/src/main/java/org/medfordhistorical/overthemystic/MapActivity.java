@@ -54,6 +54,7 @@ public class MapActivity extends AppCompatActivity {
         Mapbox.getInstance(this, ACCESS_TOKEN);
         setContentView(R.layout.activity_map);
         setTitle("Start Navigation");
+
         Intent intent = getIntent();
         int[] sitesSelected = intent.getIntArrayExtra("siteIds");
         Log.d("sites selected", Arrays.toString(sitesSelected));
