@@ -17,9 +17,6 @@ public class StartTourActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_tour);
-        setTitle("New Tour");
-        Intent intent = getIntent();
-        String tourType = intent.getStringExtra("tourType");
         QueryUtils.getSitesFromServer(getApplicationContext());
 
         FloatingActionButton goToMapBtn = (FloatingActionButton) findViewById(R.id.go_to_map_btn);
@@ -27,23 +24,20 @@ public class StartTourActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(StartTourActivity.this, MapActivity.class);
-//                int[] ids =  {7,8,4,10};
-//                intent.putExtra("siteIds",ids);
                 startActivity(intent);
             }
         });
 
-
         ArrayList<Site> sites = getSites();
 
-        recyclerView = (RecyclerView) findViewById(R.id.recycler);
+        recyclerView = findViewById(R.id.recycler);
         ViewAdapter adapter = new ViewAdapter(getApplicationContext(), sites);
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
         recyclerView.setAdapter(adapter);
     }
 
     public ArrayList<Site> getSites(){
-        siteList = new ArrayList<Site>();
+        siteList = new ArrayList<>();
 
         String[] imgList = {"https://c1.staticflickr.com/1/133/386986339_48fec1ff5b.jpg",
                 "https://res.cloudinary.com/simpleview/image/fetch/c_fill,f_auto,h_346,q_50,w_461/https://SouthwestOntario.simpleviewcrm.com/images/listings/original_Jumbo_The_Elephant_Monument_1.jpg",
