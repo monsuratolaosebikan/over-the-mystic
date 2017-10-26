@@ -1,7 +1,10 @@
 package org.medfordhistorical.overthemystic;
 
+import android.util.Log;
+
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import io.realm.RealmObject;
+import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 
 /**
@@ -22,6 +25,8 @@ public class Site extends RealmObject {
     private String audioUrl;
     private double latitude;
     private double longitude;
+
+    private boolean isSelected = false;
 
     public void setId(int id) { this.id = id; }
 
@@ -86,5 +91,18 @@ public class Site extends RealmObject {
 
     public double getLongitude() {
         return longitude;
+    }
+
+    public void toggleSelected(){
+        if (this.isSelected) {
+            this.isSelected = false;
+        }
+        else {
+            this.isSelected = true;
+        }
+    }
+
+    public boolean isSelected(){
+        return this.isSelected;
     }
 }

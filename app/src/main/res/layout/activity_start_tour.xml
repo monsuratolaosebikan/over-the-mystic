@@ -4,10 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler"
+    <GridView
+        android:id="@+id/gridview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:columnWidth="100dp"
+        android:numColumns="2"
+        android:verticalSpacing="0dp"
+        android:horizontalSpacing="0dp"
+        android:stretchMode="spacingWidthUniform"
+        />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/go_to_map_btn"
@@ -16,7 +23,6 @@
         android:layout_margin="16dp"
         android:clickable="true"
         app:fabSize="normal"
-        app:layout_anchor="@id/recycler"
         app:layout_anchorGravity="bottom|right|end"
         app:srcCompat="@drawable/ic_action_go" />
 

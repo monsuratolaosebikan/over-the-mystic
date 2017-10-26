@@ -14,13 +14,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
+import android.util.Log;
+
+import io.realm.Realm;
 
 public class StartTourActivity extends AppCompatActivity {
-    private RecyclerView recyclerView;
-    ViewAdapter adapter;
+    private GridView gridView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,25 +34,36 @@ public class StartTourActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String tourType = intent.getStringExtra("tourType");
 
+        final List<Site> sites = getSites();
+
+        gridView = (GridView) findViewById(R.id.gridview);
+        final SitesAdapter adapter = new SitesAdapter(this, sites);
+        gridView.setAdapter(adapter);
+
         FloatingActionButton goToMapBtn = (FloatingActionButton) findViewById(R.id.go_to_map_btn);
         goToMapBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(StartTourActivity.this, MapActivity.class);
+//                Intent intent = new Intent(StartTourActivity.this, MapActivity.class);
+//                intent.putExtra("siteIds", adapter.getSitesSelected());
                 startActivity(intent);
             }
         });
 
-        List<Site> sites = getSites();
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView parent, View view, int position, long id) {
+                Site site = sites.get(position);
+                site.toggleSelected();
+                adapter.notifyDataSetChanged();
+            }
+        });
 
-        recyclerView = (RecyclerView) findViewById(R.id.recycler);
-        adapter = new ViewAdapter(getApplicationContext(), sites);
-        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
-        recyclerView.setAdapter(adapter);
     }
 
     public List<Site> getSites(){
-        List<Site> siteList = QueryUtils.getSitesFromDatabase();
+        Realm realm = Realm.getDefaultInstance();
+        List<Site> siteList = realm.copyFromRealm(QueryUtils.getSitesFromDatabase());
         return siteList;
 
     }

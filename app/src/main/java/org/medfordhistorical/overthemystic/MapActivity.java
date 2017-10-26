@@ -1,5 +1,6 @@
 package org.medfordhistorical.overthemystic;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -52,6 +53,9 @@ public class MapActivity extends AppCompatActivity {
         Mapbox.getInstance(this, ACCESS_TOKEN);
         setContentView(R.layout.activity_map);
         setTitle("Start Navigation");
+//        Intent intent = getIntent();
+//        int[] sitesSelected = intent.getIntArrayExtra("siteIds");
+//        Log.d("sites selected", sitesSelected.toString());
 
         recyclerView = (RecyclerView) findViewById(R.id.rvSite);
 
