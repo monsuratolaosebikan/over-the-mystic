@@ -98,7 +98,31 @@ public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<Selec
                     intent.putExtra("imageUrl", sites.get(position).getImageUrl());
                     intent.putExtra("audioUrl", sites.get(position).getAudioUrl());
 
-                    context.startActivity(intent);
+                    double longitude = sites.get(position).getLongitude();
+                    double latitude = sites.get(position).getLatitude();
+
+                    boolean simulateRoute = true;
+                    MapActivity activity;
+
+                    //hacky, switch to use interface
+                    try {
+                        activity = (MapActivity) view.getContext();
+                        Position origin = Position.fromCoordinates(activity.originLocation.getLongitude(),activity.originLocation.getLatitude());
+                        Position destination = Position.fromCoordinates(longitude, latitude);
+
+                        if(origin != null) {
+                            sites.remove(position);
+                            notifyItemRemoved(position);
+                            notifyItemRangeChanged(position, sites.size());
+                            context.startActivity(intent);
+
+                            NavigationLauncher.startNavigation(activity, origin, destination, null, simulateRoute);
+
+                        }
+                    } catch (Exception e) {
+                        Log.e("location error", e.toString());
+                    }
+
                 }
             });
             bikeBtn.setOnClickListener(new View.OnClickListener() {
