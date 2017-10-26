@@ -26,8 +26,8 @@ public class StartTourActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(StartTourActivity.this, MapActivity.class);
-                int[] ids =  {7,8,4,10};
-                intent.putExtra("siteIds",ids);
+//                int[] ids =  {7,8,4,10};
+//                intent.putExtra("siteIds",ids);
                 startActivity(intent);
             }
         });
