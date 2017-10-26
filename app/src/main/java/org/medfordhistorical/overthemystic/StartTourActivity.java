@@ -20,6 +20,7 @@ public class StartTourActivity extends AppCompatActivity {
         setTitle("New Tour");
         Intent intent = getIntent();
         String tourType = intent.getStringExtra("tourType");
+        QueryUtils.getSitesFromServer(getApplicationContext());
 
         FloatingActionButton goToMapBtn = (FloatingActionButton) findViewById(R.id.go_to_map_btn);
         goToMapBtn.setOnClickListener(new View.OnClickListener(){

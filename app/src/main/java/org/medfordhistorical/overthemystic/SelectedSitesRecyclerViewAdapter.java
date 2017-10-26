@@ -2,7 +2,6 @@ package org.medfordhistorical.overthemystic;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,6 +22,9 @@ import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
 import com.mapbox.services.commons.models.Position;
 
 import java.util.List;
+
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 
 public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<SelectedSitesRecyclerViewAdapter.ViewHolder> {
     private List<Site> sites;
@@ -52,7 +54,10 @@ public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<Selec
         TextView nameTextView = viewHolder.nameTextView;
         nameTextView.setText(site.getName());
 
-        FloatingActionButton navigateBtn = viewHolder.navigateBtn;
+        FloatingActionMenu navigateBtn = viewHolder.navigateBtn;
+        navigateBtn.bringToFront();
+        navigateBtn.setIconAnimated(false);
+        navigateBtn.getMenuIconView().setImageResource(R.drawable.ic_action_navigate);
 
         ImageView imageView = viewHolder.imageView;
 
@@ -70,15 +75,33 @@ public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<Selec
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView nameTextView;
         private ImageView imageView;
-        private FloatingActionButton navigateBtn;
+        private FloatingActionMenu navigateBtn;
+        private FloatingActionButton walkBtn;
+        private FloatingActionButton bikeBtn;
 
         public ViewHolder(final View siteView) {
             super(siteView);
 
             nameTextView = (TextView) siteView.findViewById(R.id.site_name);
             imageView = (ImageView) siteView.findViewById(R.id.site_image);
-            navigateBtn = (FloatingActionButton) siteView.findViewById(R.id.navigate);
-            navigateBtn.setOnClickListener(new View.OnClickListener() {
+            navigateBtn = (FloatingActionMenu) siteView.findViewById(R.id.navigate);
+            walkBtn = (FloatingActionButton) siteView.findViewById(R.id.navigate_walk);
+            bikeBtn = (FloatingActionButton) siteView.findViewById(R.id.navigate_bike);
+            walkBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(context, ViewLocationDetail.class);
+                    int position = getAdapterPosition();
+                    intent.putExtra("siteId", sites.get(position).getId());
+                    intent.putExtra("siteName", sites.get(position).getName());
+                    intent.putExtra("siteDesc", sites.get(position).getShortDesc());
+                    intent.putExtra("imageUrl", sites.get(position).getImageUrl());
+                    intent.putExtra("audioUrl", sites.get(position).getAudioUrl());
+
+                    context.startActivity(intent);
+                }
+            });
+            bikeBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(context, ViewLocationDetail.class);

@@ -105,6 +105,7 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
 
         if(siteIds == null) {
             sites = realm.copyFromRealm(QueryUtils.getSitesFromDatabase());
+            Log.d("sites", sites.toString());
         }
         else {
             for(int i = 0; i < siteIds.length; i++) {

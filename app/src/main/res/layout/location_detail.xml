@@ -38,12 +38,10 @@
                     android:id="@+id/locationDescription"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:textSize="18sp"
-                    android:textColor="#333333"
                     android:layout_marginTop="30dp"
                     android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp"
-                    android:paddingBottom="40dp" />
+                    android:paddingBottom="50dp" />
             </ScrollView>
         </LinearLayout>
 
@@ -58,5 +56,6 @@
         app:fabSize="normal"
         app:layout_anchor="@id/viewA"
         app:layout_anchorGravity="bottom|right|end"
-        app:srcCompat="@drawable/ic_action_play"/>
+        app:srcCompat="@drawable/ic_action_play"
+        android:drawable="@color/primaryColor" />
 </android.support.design.widget.CoordinatorLayout>
