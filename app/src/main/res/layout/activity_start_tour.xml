@@ -13,7 +13,7 @@
         android:numColumns="2"
         android:verticalSpacing="0dp"
         android:horizontalSpacing="0dp"
-        android:stretchMode="spacingWidthUniform"
+        android:stretchMode="columnWidth"
         />
 
     <android.support.design.widget.FloatingActionButton
