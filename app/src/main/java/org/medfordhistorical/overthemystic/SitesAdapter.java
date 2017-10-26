@@ -69,7 +69,6 @@ public class SitesAdapter extends BaseAdapter {
             Integer id = siteList.get(position).getId();
 
             if(!sitesSelected.contains(id)) {
-                Log.d("changing to visible", id.toString());
                 sitesSelected.add(id);
             }
         }

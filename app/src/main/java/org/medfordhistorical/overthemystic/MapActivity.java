@@ -55,10 +55,6 @@ public class MapActivity extends AppCompatActivity {
         setContentView(R.layout.activity_map);
         setTitle("Start Navigation");
 
-        Intent intent = getIntent();
-        int[] sitesSelected = intent.getIntArrayExtra("siteIds");
-        Log.d("sites selected", Arrays.toString(sitesSelected));
-
         recyclerView = (RecyclerView) findViewById(R.id.rvSite);
 
         mapView = (MapView) findViewById(R.id.mapView);
