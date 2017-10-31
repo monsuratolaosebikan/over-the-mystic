@@ -30,9 +30,7 @@ public class StartTourActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_tour);
-        setTitle("New Tour");
-        Intent intent = getIntent();
-        String tourType = intent.getStringExtra("tourType");
+        QueryUtils.getSitesFromServer(getApplicationContext());
 
         final List<Site> sites = getSites();
 
@@ -58,17 +56,11 @@ public class StartTourActivity extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
             }
         });
-
     }
 
     public List<Site> getSites(){
         Realm realm = Realm.getDefaultInstance();
         List<Site> siteList = realm.copyFromRealm(QueryUtils.getSitesFromDatabase());
         return siteList;
-
     }
-
-
-
-
 }
