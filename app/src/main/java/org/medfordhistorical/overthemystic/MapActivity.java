@@ -54,6 +54,7 @@ public class MapActivity extends AppCompatActivity {
         Mapbox.getInstance(this, ACCESS_TOKEN);
         setContentView(R.layout.activity_map);
         setTitle("Start Navigation");
+        QueryUtils.getSitesFromServer(getApplicationContext());
 
         recyclerView = (RecyclerView) findViewById(R.id.rvSite);
 
