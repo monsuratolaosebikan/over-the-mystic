@@ -1,6 +1,7 @@
 package org.medfordhistorical.overthemystic;
 
 import android.content.Context;
+import android.support.test.espresso.idling.CountingIdlingResource;
 import android.util.Log;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -22,8 +23,9 @@ public class QueryUtils {
 
     private QueryUtils() {}
 
-    public static void getSitesFromServer(Context context) {
+    public static void getSitesFromServer(Context context, final CountingIdlingResource idlingResource) {
         queue = Volley.newRequestQueue(context);
+        idlingResource.increment();
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, URL + "/directus/api/1.1/tables/sites/rows" , null, new Response.Listener<JSONObject>() {
             @Override
@@ -33,6 +35,7 @@ public class QueryUtils {
                 try {
                     rawSiteData = response.getJSONArray("data");
                     saveToDatabase(rawSiteData);
+                    idlingResource.decrement();
                 } catch (JSONException e) {
                     Log.e("query", "to array error");
                 }

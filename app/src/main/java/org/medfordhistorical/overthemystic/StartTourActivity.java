@@ -1,5 +1,6 @@
 package org.medfordhistorical.overthemystic;
 import android.support.design.widget.FloatingActionButton;
+import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,12 +26,14 @@ import io.realm.Realm;
 
 public class StartTourActivity extends AppCompatActivity {
     private GridView gridView;
+    CountingIdlingResource idlingResource = new CountingIdlingResource("Load Data from server");
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_tour);
-        QueryUtils.getSitesFromServer(getApplicationContext());
+        QueryUtils.getSitesFromServer(getApplicationContext(), idlingResource);
 
         final List<Site> sites = getSites();
 
@@ -62,5 +65,9 @@ public class StartTourActivity extends AppCompatActivity {
         Realm realm = Realm.getDefaultInstance();
         List<Site> siteList = realm.copyFromRealm(QueryUtils.getSitesFromDatabase());
         return siteList;
+    }
+
+    public CountingIdlingResource getIdlingResource() {
+        return idlingResource;
     }
 }
