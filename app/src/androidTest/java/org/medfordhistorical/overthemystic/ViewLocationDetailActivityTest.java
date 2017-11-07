@@ -61,19 +61,6 @@ public class MapActivityTest {
     }
 
     @Test
-    public void backPressInLocationDetailView_showsMapView() throws Exception {
-        ViewInteraction sitesRecyclerView = onView(withId(R.id.rvSite));
-
-        sitesRecyclerView.perform(
-                RecyclerViewActions.actionOnItemAtPosition(0, clickChildViewWithId(R.id.navigate_bike)));
-
-        pressBack();
-        pressBack();
-
-        onView(withId(R.id.mapView)).check(matches(isDisplayed()));
-    }
-
-    @Test
     public void finishNavigation_removesSiteFromSiteList() throws Exception {
 
     }
