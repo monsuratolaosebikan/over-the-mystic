@@ -2,11 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.medfordhistorical.overthemystic">
     <uses-permission android:name="android.permission.INTERNET"/>
-
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:hardwareAccelerated="false"
@@ -16,6 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:name=".MyApplication">
+        <service android:name="com.mapbox.services.android.telemetry.service.TelemetryService"/>
         <activity android:name=".StartTourActivity"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -40,5 +39,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".StartTourActivity" />
         </activity>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="" />
     </application>
 </manifest>
