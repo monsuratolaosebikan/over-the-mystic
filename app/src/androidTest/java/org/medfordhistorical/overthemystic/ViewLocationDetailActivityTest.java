@@ -46,9 +46,10 @@ public class ViewLocationDetailActivityTest {
     };
 
     @Test
-    public void descriptionText_isVisibleWihCorrectText() throws Exception{
+    public void requiredViews_areVisibleWithCorrectData() throws Exception{
 
         onView(withId(R.id.locationDescription)).check(matches(isDisplayed())).check(matches(withText("Test text")));
+        onView(withId(R.id.locationImage)).check(matches(isDisplayed()));
     }
 
     @Test
