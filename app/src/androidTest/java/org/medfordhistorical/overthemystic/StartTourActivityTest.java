@@ -1,29 +1,26 @@
 package org.medfordhistorical.overthemystic;
 
-
+import android.support.test.espresso.DataInteraction;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.ViewInteraction;
+import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
 
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.anything;
+import static org.hamcrest.Matchers.not;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
@@ -33,63 +30,69 @@ public class StartTourActivityTest {
     public ActivityTestRule<StartTourActivity> mActivityTestRule = new ActivityTestRule<>(StartTourActivity.class);
 
     @Test
-    public void navigationActionButtonIsVisible() {
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        onView(withId(R.id.go_to_map_btn)).check(matches(isDisplayed()));
+    public void clickGoToMapButton_opensMapUI() throws Exception{
+        Espresso.registerIdlingResources(mActivityTestRule.getActivity().getIdlingResource());
+
+        ViewInteraction floatingActionButton =
+                onView(allOf(withId(R.id.go_to_map_btn), isDisplayed()));
+
+        floatingActionButton.perform(click());
+
+        onView(withId(R.id.mapView)).check(matches(isDisplayed()));
     }
 
     @Test
-    public void startTourActivityTest() throws Exception {
+    public void clickSite_addsSelectedOverlay() throws Exception {
         Espresso.registerIdlingResources(mActivityTestRule.getActivity().getIdlingResource());
 
-        ViewInteraction floatingActionButton = onView(
-                allOf(withId(R.id.go_to_map_btn), isDisplayed()));
-        floatingActionButton.perform(click());
+        DataInteraction site = onData(anything()).inAdapterView(withId(R.id.gridview)).atPosition(0);
 
+        //check that overlay image is not visible at first
+        site.onChildView(withId(R.id.overlayImg)).check(matches(not(isDisplayed())));
 
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        //click first site
+        onData(anything())
+                .inAdapterView(withId(R.id.gridview))
+                .atPosition(0)
+                .perform(click());
 
-        ViewInteraction textView = onView(
-                allOf(withText("Start Navigation"),
-                        childAtPosition(
-                                allOf(withId(R.id.action_bar),
-                                        childAtPosition(
-                                                withId(R.id.action_bar_container),
-                                                0)),
-                                1),
-                        isDisplayed()));
-        textView.check(matches(withText("Start Navigation")));
+        //check that overlay image is now visible
+        site.onChildView(withId(R.id.overlayImg)).check(matches(isDisplayed()));
 
+        //click first site again to deselect
+        onData(anything())
+                .inAdapterView(withId(R.id.gridview))
+                .atPosition(0)
+                .perform(click());
 
+        //check that overlay image is not visible once site is deselected
+        site.onChildView(withId(R.id.overlayImg)).check(matches(not(isDisplayed())));
     }
 
-    private static Matcher<View> childAtPosition(
-            final Matcher<View> parentMatcher, final int position) {
+    @Test
+    public void addSitesToVisitList() throws Exception {
+        Espresso.registerIdlingResources(mActivityTestRule.getActivity().getIdlingResource());
 
-        return new TypeSafeMatcher<View>() {
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("Child at position " + position + " in parent ");
-                parentMatcher.describeTo(description);
-            }
+        //select 3 sites
+        onData(anything()).atPosition(0).perform(click());
+        onData(anything()).atPosition(1).perform(click());
+        onData(anything()).atPosition(2).perform(click());
 
-            @Override
-            public boolean matchesSafely(View view) {
-                ViewParent parent = view.getParent();
-                return parent instanceof ViewGroup && parentMatcher.matches(parent)
-                        && view.equals(((ViewGroup) parent).getChildAt(position));
-            }
-        };
+        //go to map view
+        onView(allOf(withId(R.id.go_to_map_btn), isDisplayed())).perform(click());
+
+        ViewInteraction sitesRecyclerView = onView(withId(R.id.rvSite));
+
+        //scroll to 2nd site and click to verify existence
+        sitesRecyclerView.perform(RecyclerViewActions.scrollToPosition(1));
+        sitesRecyclerView.perform(RecyclerViewActions.actionOnItemAtPosition(1, click()));
+
+        //scroll to 3rd site and click to verify existence
+        sitesRecyclerView.perform(RecyclerViewActions.scrollToPosition(2));
+        sitesRecyclerView.perform(RecyclerViewActions.actionOnItemAtPosition(2, click()));
+
+        //scroll to 1st site and click to verify existence
+        sitesRecyclerView.perform(RecyclerViewActions.scrollToPosition(0));
+        sitesRecyclerView.perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
     }
 }
