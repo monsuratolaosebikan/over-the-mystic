@@ -50,14 +50,6 @@ public class ViewLocationDetailActivityTest {
 
         onView(withId(R.id.locationDescription)).check(matches(isDisplayed())).check(matches(withText("Test text")));
         onView(withId(R.id.locationImage)).check(matches(isDisplayed()));
-    }
-
-    @Test
-    public void clickAudioFabButton_changesFabIcon() throws Exception {
-        ViewInteraction audioFab = onView(withId(R.id.play));
-
-        audioFab.perform(click());
-
-        audioFab.perform(click());
+        onView(withId(R.id.play)).check(matches(isDisplayed()));
     }
 }
