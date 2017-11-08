@@ -73,12 +73,6 @@ public class MapActivityTest {
         onView(withId(R.id.mapView)).check(matches(isDisplayed()));
     }
 
-    @Test
-    public void finishNavigation_removesSiteFromSiteList() throws Exception {
-
-    }
-
-
     public static ViewAction clickChildViewWithId(final int id) {
         return new ViewAction() {
             @Override
