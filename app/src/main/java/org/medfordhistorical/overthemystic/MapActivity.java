@@ -38,6 +38,7 @@ import com.mapbox.services.commons.models.Position;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import io.realm.Realm;
 import retrofit2.Call;
@@ -129,7 +130,7 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
         List<Position> coordinates = new ArrayList<>();
         Position origin, destination;
 
-        if (method.toLowerCase().equals("bike")) profile = DirectionsCriteria.PROFILE_WALKING;
+        if (method.toLowerCase(Locale.US).equals("bike")) profile = DirectionsCriteria.PROFILE_WALKING;
         else  profile = DirectionsCriteria.PROFILE_CYCLING;
 
         if (originLocation == null)

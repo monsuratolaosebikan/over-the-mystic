@@ -167,7 +167,7 @@ public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<Selec
         }
 
         @Override
-        public void onClick(View view) {
+       public void onClick(View view) {
             int position = getAdapterPosition(); // gets item position
             if (position != RecyclerView.NO_POSITION) { // Check if an item was deleted
 

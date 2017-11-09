@@ -38,6 +38,7 @@ public class ViewLocationDetail extends AppCompatActivity {
         setTitle(name);
 
         ImageView imageView = (ImageView) findViewById(R.id.locationImage);
+        imageView.setContentDescription(name);
 
         Glide.with(imageView.getContext())
                 .load(imageUrl)
