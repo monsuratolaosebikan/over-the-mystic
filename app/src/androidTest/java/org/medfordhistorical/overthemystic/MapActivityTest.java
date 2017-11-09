@@ -60,19 +60,6 @@ public class MapActivityTest {
         onView(withId(R.id.locationDescription)).check(matches(isDisplayed()));
     }
 
-    @Test
-    public void backPressInLocationDetailView_showsMapView() throws Exception {
-        ViewInteraction sitesRecyclerView = onView(withId(R.id.rvSite));
-
-        sitesRecyclerView.perform(
-                RecyclerViewActions.actionOnItemAtPosition(0, clickChildViewWithId(R.id.navigate_bike)));
-
-        pressBack();
-        pressBack();
-
-        onView(withId(R.id.mapView)).check(matches(isDisplayed()));
-    }
-
     public static ViewAction clickChildViewWithId(final int id) {
         return new ViewAction() {
             @Override

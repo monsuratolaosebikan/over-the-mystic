@@ -95,4 +95,12 @@ public class StartTourActivityTest {
         sitesRecyclerView.perform(RecyclerViewActions.scrollToPosition(0));
         sitesRecyclerView.perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
     }
+
+    @Test
+    public void scrollTest() throws Exception {
+        Espresso.registerIdlingResources(mActivityTestRule.getActivity().getIdlingResource());
+
+        onData(anything()).atPosition(7).perform(click());
+        onData(anything()).atPosition(1).perform(click());
+    }
 }
