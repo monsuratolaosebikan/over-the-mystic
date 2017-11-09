@@ -37,11 +37,12 @@
                 <TextView
                     android:id="@+id/locationDescription"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
                     android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp"
-                    android:paddingBottom="50dp" />
+                    android:paddingBottom="50dp"
+                    android:textIsSelectable="true"/>
             </ScrollView>
         </LinearLayout>
 
@@ -53,6 +54,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:clickable="true"
+        android:focusable="true"
         app:fabSize="normal"
         app:layout_anchor="@id/viewA"
         app:layout_anchorGravity="bottom|right|end"

@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_favorite"
+        android:id="@+id/action_navigate"
         android:icon="@drawable/ic_action_navigate"
         android:title="Go"
         app:showAsAction="ifRoom|withText"/>
