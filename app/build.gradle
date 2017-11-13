@@ -52,11 +52,10 @@ realm {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-
     compile 'com.android.support.test.espresso:espresso-idling-resource:2.2.2'
     androidTestCompile('com.android.support.test.espresso:espresso-contrib:2.2') {
         // Necessary to avoid version conflicts
@@ -65,16 +64,15 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
         exclude module: 'recyclerview-v7'
     }
-
     compile 'com.android.support:appcompat-v7:26.0.2'
     compile 'com.android.support:design:26.0.2'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile ('com.mapbox.mapboxsdk:mapbox-android-navigation-ui:0.6.3') {
+    compile('com.mapbox.mapboxsdk:mapbox-android-navigation-ui:0.6.1') {
         transitive = true
     }
     testCompile 'junit:junit:4.12'
-    compile('com.mapbox.mapboxsdk:mapbox-android-sdk:5.2.0-beta.3@aar') {
-        transitive=true
+    compile('com.mapbox.mapboxsdk:mapbox-android-sdk:5.1.4@aar') {
+        transitive = true
     }
     compile 'com.mapbox.mapboxsdk:mapbox-android-services:2.2.6'
     compile 'com.android.support:recyclerview-v7:26.0.2'

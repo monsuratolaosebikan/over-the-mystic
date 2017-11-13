@@ -152,6 +152,27 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
 
     @Override
     public void onNavButtonClick(int position, String type) {
+        LatLng selectedLocationLatLng = sites.get(position).getLocation();
+        Log.d("nav button clik", type);
+
+        Intent intent = new Intent(this, ViewLocationDetail.class);
+        intent.putExtra("siteId", sites.get(position).getId());
+        intent.putExtra("siteName", sites.get(position).getName());
+        intent.putExtra("siteDesc", sites.get(position).getShortDesc());
+        intent.putExtra("imageUrl", sites.get(position).getImageUrl());
+        intent.putExtra("audioUrl", sites.get(position).getAudioUrl());
+
+        double longitude = sites.get(position).getLongitude();
+        double latitude = sites.get(position).getLatitude();
+
+        boolean simulateRoute = true;
+
+        Position origin = Position.fromCoordinates(MOCK_DEVICE_LOCATION_LAT_LNG.getLongitude(), MOCK_DEVICE_LOCATION_LAT_LNG.getLatitude());
+        Position destination = Position.fromCoordinates(longitude, latitude);
+
+        startActivity(intent);
+
+        NavigationLauncher.startNavigation(this, origin, destination, null, simulateRoute);
 
     }
 
@@ -216,20 +237,6 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
                 Log.e("MapActivity", throwable.toString());
             }
         });
-    }
-
-    public void startNavigation() {
-        if (originLocation == null)
-            enableLocationPlugin();
-
-        Position origin = Position.fromCoordinates(originLocation.getLongitude(), originLocation.getLatitude());
-        Position destination = Position.fromCoordinates(-71.12012, 42.40742);
-
-        boolean simulateRoute = true;
-
-        if(originLocation != null) {
-            NavigationLauncher.startNavigation(this, origin, destination, null, simulateRoute);
-        }
     }
 
     @SuppressWarnings( {"MissingPermission"})
