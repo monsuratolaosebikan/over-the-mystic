@@ -11,6 +11,7 @@ import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
@@ -22,6 +23,7 @@ import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerMode;
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
 import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
@@ -167,12 +169,17 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
 
         boolean simulateRoute = true;
 
-        Position origin = Position.fromCoordinates(MOCK_DEVICE_LOCATION_LAT_LNG.getLongitude(), MOCK_DEVICE_LOCATION_LAT_LNG.getLatitude());
-        Position destination = Position.fromCoordinates(longitude, latitude);
+        if(originLocation != null) {
+            Position origin = Position.fromCoordinates(originLocation.getLongitude(), originLocation.getLatitude());
+            Position destination = Position.fromCoordinates(longitude, latitude);
 
-        startActivity(intent);
+            startActivity(intent);
 
-        NavigationLauncher.startNavigation(this, origin, destination, null, simulateRoute);
+            NavigationLauncher.startNavigation(this, origin, destination, null, simulateRoute);
+        }
+        else {
+            //request permission or notify user of no found location
+        }
 
     }
 
@@ -199,8 +206,10 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
 
     private void getDirections(double destinationLatCoordinate, double destinationLongCoordinate) {
 
-        Position mockCurrentLocation = Position.fromLngLat(MOCK_DEVICE_LOCATION_LAT_LNG.getLongitude(),
-                MOCK_DEVICE_LOCATION_LAT_LNG.getLatitude());
+        if(originLocation == null) return;
+
+        Position mockCurrentLocation = Position.fromLngLat(originLocation.getLongitude(),
+                originLocation.getLatitude());
 
         Position destinationMarker = Position.fromLngLat(destinationLongCoordinate, destinationLatCoordinate);
 
@@ -246,8 +255,8 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
             // Create an instance of LOST location engine
             initializeLocationEngine();
 
-//            locationPlugin = new LocationLayerPlugin(mapView, mapboxMap, locationEngine);
-//            locationPlugin.setLocationLayerEnabled(LocationLayerMode.TRACKING);
+            locationPlugin = new LocationLayerPlugin(mapView, mapboxMap, locationEngine);
+            locationPlugin.setLocationLayerEnabled(LocationLayerMode.TRACKING);
         } else {
             permissionsManager = new PermissionsManager(this);
             permissionsManager.requestLocationPermissions(this);
