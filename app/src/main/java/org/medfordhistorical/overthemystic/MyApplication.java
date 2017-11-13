@@ -17,16 +17,13 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-//        Fabric.with(this, new Crashlytics());
-        Fabric.with(this, new Crashlytics.Builder().core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build()).build());
 
+        Fabric.with(this, new Crashlytics());
 
         Realm.init(this);
         RealmConfiguration config = new RealmConfiguration.Builder().name("myrealm.realm")
                                                                     .deleteRealmIfMigrationNeeded()
                                                                     .build();
         Realm.setDefaultConfiguration(config);
-//        Mapbox.getInstance(this, ACCESS_TOKEN);
-
     }
 }
