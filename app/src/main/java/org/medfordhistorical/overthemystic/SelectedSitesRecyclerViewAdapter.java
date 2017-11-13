@@ -69,7 +69,7 @@ public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<Selec
 
     @Override
     public int getItemCount() {
-        return this.sites.size();
+            return this.sites.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -102,25 +102,36 @@ public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<Selec
                     double latitude = sites.get(position).getLatitude();
 
                     boolean simulateRoute = true;
-                    MapActivity activity;
+                    MapActivity activity = null;
+                    Position origin = null,destination = null;
 
                     //hacky, switch to use interface
                     try {
                         activity = (MapActivity) view.getContext();
-                        Position origin = Position.fromCoordinates(activity.originLocation.getLongitude(),activity.originLocation.getLatitude());
-                        Position destination = Position.fromCoordinates(longitude, latitude);
+                        origin = Position.fromCoordinates(42.3601,71.0589);
+                       destination = Position.fromCoordinates(longitude, latitude);
 
-                        if(origin != null) {
-                            sites.remove(position);
-                            notifyItemRemoved(position);
-                            notifyItemRangeChanged(position, sites.size());
-                            context.startActivity(intent);
-
-                            NavigationLauncher.startNavigation(activity, origin, destination, null, simulateRoute);
-
-                        }
+//                        if(origin != null) {
+//                            sites.remove(position);
+//                            notifyItemRemoved(position);
+//                            notifyItemRangeChanged(position, sites.size());
+//                            context.startActivity(intent);
+//
+//                            NavigationLauncher.startNavigation(activity, origin, destination, null, simulateRoute);
+//
+//                        }
                     } catch (Exception e) {
                         Log.e("location error", e.toString());
+                    }
+
+                    if(origin != null && activity !=null) {
+                        sites.remove(position);
+                        notifyItemRemoved(position);
+                        notifyItemRangeChanged(position, sites.size());
+                        context.startActivity(intent);
+
+                        NavigationLauncher.startNavigation(activity, origin, destination, null, simulateRoute);
+
                     }
 
                 }
@@ -172,13 +183,16 @@ public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<Selec
             if (position != RecyclerView.NO_POSITION) { // Check if an item was deleted
 
                 LatLng selectedLocationLatLng = sites.get(position).getLocation();
-                CameraPosition newCameraPosition = new CameraPosition.Builder()
-                        .target(selectedLocationLatLng)
-                        .build();
-
-                map.easeCamera(CameraUpdateFactory.newCameraPosition(newCameraPosition));
-                List<Marker> markers = map.getMarkers();
-                map.selectMarker(markers.get(position));
+                if(selectedLocationLatLng != null) {
+                    CameraPosition newCameraPosition = new CameraPosition.Builder()
+                            .target(selectedLocationLatLng)
+                            .build();
+                    if(newCameraPosition != null) {
+                        map.easeCamera(CameraUpdateFactory.newCameraPosition(newCameraPosition));
+                        List<Marker> markers = map.getMarkers();
+                        map.selectMarker(markers.get(position));
+                    }
+                }
             }
         }
 

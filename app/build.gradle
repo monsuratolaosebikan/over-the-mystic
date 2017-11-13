@@ -21,6 +21,11 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        javaCompileOptions {
+            annotationProcessorOptions {
+                includeCompileClasspath false
+            }
+        }
     }
     buildTypes {
         release {
@@ -62,14 +67,13 @@ dependencies {
     }
 
     compile 'com.android.support:appcompat-v7:26.0.2'
-    compile 'com.android.support:support-v13:26.0.2'
     compile 'com.android.support:design:26.0.2'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile ('com.mapbox.mapboxsdk:mapbox-android-navigation-ui:0.6.1') {
+    compile ('com.mapbox.mapboxsdk:mapbox-android-navigation-ui:0.6.3') {
         transitive = true
     }
     testCompile 'junit:junit:4.12'
-    compile('com.mapbox.mapboxsdk:mapbox-android-sdk:5.1.4@aar') {
+    compile('com.mapbox.mapboxsdk:mapbox-android-sdk:5.2.0-beta.3@aar') {
         transitive=true
     }
     compile 'com.mapbox.mapboxsdk:mapbox-android-services:2.2.6'

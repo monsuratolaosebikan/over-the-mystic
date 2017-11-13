@@ -47,7 +47,8 @@ import retrofit2.Response;
 
 
 
-public class MapActivity extends AppCompatActivity implements LocationEngineListener, PermissionsListener {
+public class MapActivity extends AppCompatActivity implements LocationEngineListener,
+        PermissionsListener {
 
     private MapboxMap mapboxMap;
     private MapView mapView;
@@ -76,28 +77,18 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
         Intent intent = getIntent();
         siteIds = intent.getIntArrayExtra("siteIds");
 
-        recyclerView = (RecyclerView) findViewById(R.id.rvSite);
-        mapView = (MapView) findViewById(R.id.mapView);
+        mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
 
-        //adds markers to map
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
-            public void onMapReady(MapboxMap mapboxMap) {
+            public void onMapReady(final MapboxMap mapboxMap) {
 
                 MapActivity.this.mapboxMap = mapboxMap;
 
-                enableLocationPlugin();
-
                 setSites(siteIds);
-
-                adapter = new SelectedSitesRecyclerViewAdapter(sites, mapboxMap);
-                LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
-                recyclerView.setLayoutManager(layoutManager);
-                recyclerView.setItemAnimator(new DefaultItemAnimator());
-                recyclerView.setAdapter(adapter);
-                SnapHelper snapHelper = new LinearSnapHelper();
-                snapHelper.attachToRecyclerView(recyclerView);
+                enableLocationPlugin();
+                setUpRecyclerView();
             }
         });
     }
@@ -111,17 +102,27 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
         }
         else {
             for(int i = 0; i < siteIds.length; i++) {
-                sites.add(realm.copyFromRealm(QueryUtils.getSiteFromDatabase(siteIds[i])));
+                Site site = realm.copyFromRealm(QueryUtils.getSiteFromDatabase(siteIds[i]));
+                sites.add(site);
+                mapboxMap.addMarker(new MarkerOptions()
+                        .position(site.getLocation())
+                        .title(site.getName()));
             }
         }
 
-        for (int i = 0; i < sites.size(); i++) {
-            mapboxMap.addMarker(new MarkerOptions()
-                      .position(sites.get(i).getLocation())
-                      .title(sites.get(i).getName()));
+//            getRoute("bike");
+    }
 
-            getRoute("bike");
-        }
+    public void setUpRecyclerView() {
+        recyclerView = (RecyclerView) findViewById(R.id.rvSite);
+        recyclerView.setHasFixedSize(true);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+        adapter = new SelectedSitesRecyclerViewAdapter(sites, mapboxMap);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(adapter);
+        SnapHelper snapHelper = new LinearSnapHelper();
+        snapHelper.attachToRecyclerView(recyclerView);
     }
 
     public void getRoute(String method) {
@@ -147,6 +148,8 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
                                                            sites.get(i).getLatitude());
             coordinates.add(coordinate);
         }
+
+        startNavigation();
 
         NavigationRoute.Builder navigationRouteBuilder = NavigationRoute.builder()
                 .accessToken(Mapbox.getAccessToken())
@@ -209,8 +212,8 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
             // Create an instance of LOST location engine
             initializeLocationEngine();
 
-            locationPlugin = new LocationLayerPlugin(mapView, mapboxMap, locationEngine);
-            locationPlugin.setLocationLayerEnabled(LocationLayerMode.TRACKING);
+//            locationPlugin = new LocationLayerPlugin(mapView, mapboxMap, locationEngine);
+//            locationPlugin.setLocationLayerEnabled(LocationLayerMode.TRACKING);
         } else {
             permissionsManager = new PermissionsManager(this);
             permissionsManager.requestLocationPermissions(this);
@@ -275,25 +278,22 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
     @SuppressWarnings( {"MissingPermission"})
     protected void onStart() {
         super.onStart();
+        mapView.onStart();
+
         if (locationEngine != null) {
             locationEngine.requestLocationUpdates();
+            locationEngine.addLocationEngineListener(this);
         }
-        if (locationPlugin != null) {
-            locationPlugin.onStart();
-        }
-        mapView.onStart();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        mapView.onStop();
+
         if (locationEngine != null) {
             locationEngine.removeLocationUpdates();
         }
-        if (locationPlugin != null) {
-            locationPlugin.onStop();
-        }
-        mapView.onStop();
     }
 
     @Override
