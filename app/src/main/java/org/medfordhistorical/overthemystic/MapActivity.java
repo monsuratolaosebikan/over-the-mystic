@@ -13,17 +13,18 @@ import android.support.v7.widget.SnapHelper;
 import android.util.Log;
 
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
+import com.mapbox.mapboxsdk.annotations.PolylineOptions;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
-import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerMode;
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
 import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
-import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
 import com.mapbox.services.android.telemetry.location.LocationEngine;
 import com.mapbox.services.android.telemetry.location.LocationEngineListener;
 import com.mapbox.services.android.telemetry.location.LocationEnginePriority;
@@ -31,24 +32,26 @@ import com.mapbox.services.android.telemetry.location.LostLocationEngine;
 import com.mapbox.services.android.telemetry.permissions.PermissionsListener;
 import com.mapbox.services.android.telemetry.permissions.PermissionsManager;
 import com.mapbox.services.api.directions.v5.DirectionsCriteria;
+import com.mapbox.services.api.directions.v5.MapboxDirections;
 import com.mapbox.services.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.services.api.directions.v5.models.DirectionsRoute;
+import com.mapbox.services.commons.geojson.LineString;
 import com.mapbox.services.commons.models.Position;
 
-import java.util.Arrays;
+
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Locale;
 
 import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.mapbox.services.Constants.PRECISION_6;
 
 
 public class MapActivity extends AppCompatActivity implements LocationEngineListener,
-        PermissionsListener {
+        PermissionsListener, SelectedSitesRecyclerViewAdapter.ClickListener {
 
     private MapboxMap mapboxMap;
     private MapView mapView;
@@ -62,6 +65,8 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
     private int[] siteIds;
     private DirectionsRoute currentRoute;
     private NavigationMapRoute navigationMapRoute;
+    private MapboxDirections directionsApiClient;
+    private static final LatLng MOCK_DEVICE_LOCATION_LAT_LNG = new LatLng(42.4075, -71.1190);
     private String ACCESS_TOKEN = "pk.eyJ1IjoibWVkZm9yZGhpc3RvcmljYWwiLCJhIjoiY2o4ZXNiNHN2M" +
             "TZycjMzb2ttcWp0dDJ1aiJ9.zt52s3jkwqtDc1I2Fv5cJg";
 
@@ -88,6 +93,7 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
 
                 setSites(siteIds);
                 enableLocationPlugin();
+                addFakeLocationMarkerToMap();
                 setUpRecyclerView();
             }
         });
@@ -109,86 +115,107 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
                         .title(site.getName()));
             }
         }
-
-//            getRoute("bike");
     }
 
     public void setUpRecyclerView() {
-        recyclerView = (RecyclerView) findViewById(R.id.rvSite);
+        recyclerView = findViewById(R.id.rvSite);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new SelectedSitesRecyclerViewAdapter(sites, mapboxMap);
+        adapter = new SelectedSitesRecyclerViewAdapter(sites, mapboxMap, getApplicationContext(), this);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
         SnapHelper snapHelper = new LinearSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
     }
 
-    public void getRoute(String method) {
+    public void addFakeLocationMarkerToMap() {
+        mapboxMap.addMarker(new MarkerOptions()
+                .position(MOCK_DEVICE_LOCATION_LAT_LNG)
+                .icon(IconFactory.getInstance(this.getApplicationContext()).fromResource(R.drawable.blue_user_location)));
+    }
 
-        String profile;
-        List<Position> coordinates = new ArrayList<>();
-        Position origin, destination;
+    @Override
+    public void onItemClick(int position) {
 
-        if (method.toLowerCase(Locale.US).equals("bike")) profile = DirectionsCriteria.PROFILE_WALKING;
-        else  profile = DirectionsCriteria.PROFILE_CYCLING;
+        LatLng selectedLocationLatLng = sites.get(position).getLocation();
+        CameraPosition newCameraPosition = new CameraPosition.Builder()
+                .target(selectedLocationLatLng)
+                .build();
 
-        if (originLocation == null)
-            enableLocationPlugin();
+        mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(newCameraPosition), 1200);
+        mapboxMap.selectMarker(mapboxMap.getMarkers().get(position));
 
-        origin = Position.fromCoordinates(originLocation.getLongitude(),
-                                                   originLocation.getLatitude());
+        getDirections(selectedLocationLatLng.getLatitude(), selectedLocationLatLng.getLongitude());
 
-        destination = Position.fromCoordinates(sites.get(sites.size()-1).getLongitude(),
-                                                        sites.get(sites.size()-1).getLatitude());
+    }
 
-        for (int i = 0; i < sites.size(); i++) {
-            Position coordinate = Position.fromCoordinates(sites.get(i).getLongitude(),
-                                                           sites.get(i).getLatitude());
-            coordinates.add(coordinate);
+    @Override
+    public void onNavButtonClick(int position, String type) {
+
+    }
+
+    public void drawRoute(DirectionsRoute route, String method) {
+
+        if (mapboxMap.getPolylines().size() > 0) {
+            mapboxMap.removePolyline(mapboxMap.getPolylines().get(0));
         }
 
-        startNavigation();
+        LineString lineString = LineString.fromPolyline(route.getGeometry(), PRECISION_6);
+        List<Position> coordinates = lineString.getCoordinates();
+        LatLng[] polylineDirectionsPoints = new LatLng[coordinates.size()];
 
-        NavigationRoute.Builder navigationRouteBuilder = NavigationRoute.builder()
-                .accessToken(Mapbox.getAccessToken())
-                .profile(profile)
-                .origin(origin)
-                .destination(destination);
-
-        for (int index = 0; index < coordinates.size(); index++) {
-            navigationRouteBuilder.addWaypoint(coordinates.get(index));
+        for (int i = 0; i < coordinates.size(); i++) {
+            polylineDirectionsPoints[i] = new LatLng(
+                    coordinates.get(i).getLatitude(),
+                    coordinates.get(i).getLongitude());
         }
 
-        navigationRouteBuilder.build()
-                .getRoute(new Callback<DirectionsResponse>() {
-                    @Override
-                    public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
-                        if (response.body() == null) {
-                            Log.e("nav", "No routes found, make sure you set the right user and access token.");
-                            return;
-                        } else if (response.body().getRoutes().size() < 1) {
-                            Log.e("nav", "No routes found");
-                            return;
-                        }
+        mapboxMap.addPolyline(new PolylineOptions()
+                .add(polylineDirectionsPoints));
 
-                        currentRoute = response.body().getRoutes().get(0);
+    }
 
-                        // Draw the route on the map
-                        if (navigationMapRoute != null) {
-                            navigationMapRoute.removeRoute();
-                        } else {
-                            navigationMapRoute = new NavigationMapRoute(null, mapView, mapboxMap);
-                        }
-                        navigationMapRoute.addRoute(currentRoute);
-                    }
+    private void getDirections(double destinationLatCoordinate, double destinationLongCoordinate) {
 
-                    @Override
-                    public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
-                        Log.e("nav", "Error: " + throwable.getMessage());
-                    }
-                });
+        Position mockCurrentLocation = Position.fromLngLat(MOCK_DEVICE_LOCATION_LAT_LNG.getLongitude(),
+                MOCK_DEVICE_LOCATION_LAT_LNG.getLatitude());
+
+        Position destinationMarker = Position.fromLngLat(destinationLongCoordinate, destinationLatCoordinate);
+
+        directionsApiClient = new MapboxDirections.Builder()
+                .setOrigin(mockCurrentLocation)
+                .setDestination(destinationMarker)
+                .setOverview(DirectionsCriteria.OVERVIEW_FULL)
+                .setProfile(DirectionsCriteria.PROFILE_WALKING)
+                .setAccessToken(ACCESS_TOKEN)
+                .build();
+
+        directionsApiClient.enqueueCall(new Callback<DirectionsResponse>() {
+            @Override
+            public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
+
+                if (response.body() == null) {
+                    Log.e("MapActivity", "No routes found, make sure you set the right user and access token.");
+                }
+
+                else if (response.body().getRoutes().size() < 1) {
+                    Log.e("MapActivity", "No routes found");
+                }
+
+                else {
+                    currentRoute = response.body().getRoutes().get(0);
+                    drawRoute(currentRoute, "walk");
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
+                Log.e("MapActivity", throwable.toString());
+            }
+        });
     }
 
     public void startNavigation() {

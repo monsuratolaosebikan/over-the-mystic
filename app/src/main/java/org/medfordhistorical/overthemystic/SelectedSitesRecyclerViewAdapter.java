@@ -2,6 +2,7 @@ package org.medfordhistorical.overthemystic;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,12 +31,19 @@ public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<Selec
     private List<Site> sites;
     private MapboxMap map;
     private Context context;
+    private ClickListener clickListener;
 
-    public SelectedSitesRecyclerViewAdapter(List<Site> sites, MapboxMap map) {
+    public SelectedSitesRecyclerViewAdapter(List<Site> sites, MapboxMap map, Context context, ClickListener cardClickListener) {
         this.sites = sites;
         this.map = map;
+        this.context = context;
+        this.clickListener = cardClickListener;
     }
 
+    public interface ClickListener {
+        void onItemClick(int position);
+        void onNavButtonClick(int position, String type);
+    }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -46,6 +54,7 @@ public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<Selec
         ViewHolder viewHolder = new ViewHolder(siteView);
         return viewHolder;
     }
+
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
@@ -72,9 +81,10 @@ public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<Selec
             return this.sites.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+  public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView nameTextView;
         private ImageView imageView;
+        private CardView cardView;
         private FloatingActionMenu navigateBtn;
         private FloatingActionButton walkBtn;
         private FloatingActionButton bikeBtn;
@@ -82,35 +92,102 @@ public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<Selec
         public ViewHolder(final View siteView) {
             super(siteView);
 
-            nameTextView = (TextView) siteView.findViewById(R.id.site_name);
-            imageView = (ImageView) siteView.findViewById(R.id.site_image);
-            navigateBtn = (FloatingActionMenu) siteView.findViewById(R.id.navigate);
-            walkBtn = (FloatingActionButton) siteView.findViewById(R.id.navigate_walk);
-            bikeBtn = (FloatingActionButton) siteView.findViewById(R.id.navigate_bike);
+            nameTextView = siteView.findViewById(R.id.site_name);
+            imageView = siteView.findViewById(R.id.site_image);
+            cardView = siteView.findViewById(R.id.card_view);
+            cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    clickListener.onItemClick(getAdapterPosition());
+                }
+            });
+            navigateBtn = siteView.findViewById(R.id.navigate);
+            walkBtn = siteView.findViewById(R.id.navigate_walk);
+            bikeBtn = siteView.findViewById(R.id.navigate_bike);
+            bikeBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    clickListener.onNavButtonClick(getAdapterPosition(), "bike");
+                }
+            });
             walkBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(context, ViewLocationDetail.class);
-                    int position = getAdapterPosition();
-                    intent.putExtra("siteId", sites.get(position).getId());
-                    intent.putExtra("siteName", sites.get(position).getName());
-                    intent.putExtra("siteDesc", sites.get(position).getShortDesc());
-                    intent.putExtra("imageUrl", sites.get(position).getImageUrl());
-                    intent.putExtra("audioUrl", sites.get(position).getAudioUrl());
-
-                    double longitude = sites.get(position).getLongitude();
-                    double latitude = sites.get(position).getLatitude();
-
-                    boolean simulateRoute = true;
-                    MapActivity activity = null;
-                    Position origin = null,destination = null;
-
-                    //hacky, switch to use interface
-                    try {
-                        activity = (MapActivity) view.getContext();
-                        origin = Position.fromCoordinates(42.3601,71.0589);
-                       destination = Position.fromCoordinates(longitude, latitude);
-
+                    clickListener.onNavButtonClick(getAdapterPosition(), "walk");
+                }
+            });
+//            walkBtn.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    Intent intent = new Intent(context, ViewLocationDetail.class);
+//                    int position = getAdapterPosition();
+//                    intent.putExtra("siteId", sites.get(position).getId());
+//                    intent.putExtra("siteName", sites.get(position).getName());
+//                    intent.putExtra("siteDesc", sites.get(position).getShortDesc());
+//                    intent.putExtra("imageUrl", sites.get(position).getImageUrl());
+//                    intent.putExtra("audioUrl", sites.get(position).getAudioUrl());
+//
+//                    double longitude = sites.get(position).getLongitude();
+//                    double latitude = sites.get(position).getLatitude();
+//
+//                    boolean simulateRoute = true;
+//                    MapActivity activity = null;
+//                    Position origin = null,destination = null;
+//
+//                    //hacky, switch to use interface
+//                    try {
+//                        activity = (MapActivity) view.getContext();
+//                        origin = Position.fromCoordinates(42.3601,71.0589);
+//                       destination = Position.fromCoordinates(longitude, latitude);
+//
+////                        if(origin != null) {
+////                            sites.remove(position);
+////                            notifyItemRemoved(position);
+////                            notifyItemRangeChanged(position, sites.size());
+////                            context.startActivity(intent);
+////
+////                            NavigationLauncher.startNavigation(activity, origin, destination, null, simulateRoute);
+////
+////                        }
+//                    } catch (Exception e) {
+//                        Log.e("location error", e.toString());
+//                    }
+//
+//                    if(origin != null && activity !=null) {
+//                        sites.remove(position);
+//                        notifyItemRemoved(position);
+//                        notifyItemRangeChanged(position, sites.size());
+//                        context.startActivity(intent);
+//
+//                        NavigationLauncher.startNavigation(activity, origin, destination, null, simulateRoute);
+//
+//                    }
+//
+//                }
+//            });
+//            bikeBtn.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    Intent intent = new Intent(context, ViewLocationDetail.class);
+//                    int position = getAdapterPosition();
+//                    intent.putExtra("siteId", sites.get(position).getId());
+//                    intent.putExtra("siteName", sites.get(position).getName());
+//                    intent.putExtra("siteDesc", sites.get(position).getShortDesc());
+//                    intent.putExtra("imageUrl", sites.get(position).getImageUrl());
+//                    intent.putExtra("audioUrl", sites.get(position).getAudioUrl());
+//
+//                    double longitude = sites.get(position).getLongitude();
+//                    double latitude = sites.get(position).getLatitude();
+//
+//                    boolean simulateRoute = true;
+//                    MapActivity activity;
+//
+//                    //hacky, switch to use interface
+//                    try {
+//                        activity = (MapActivity) view.getContext();
+//                        Position origin = Position.fromCoordinates(activity.originLocation.getLongitude(),activity.originLocation.getLatitude());
+//                        Position destination = Position.fromCoordinates(longitude, latitude);
+//
 //                        if(origin != null) {
 //                            sites.remove(position);
 //                            notifyItemRemoved(position);
@@ -120,80 +197,32 @@ public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<Selec
 //                            NavigationLauncher.startNavigation(activity, origin, destination, null, simulateRoute);
 //
 //                        }
-                    } catch (Exception e) {
-                        Log.e("location error", e.toString());
-                    }
-
-                    if(origin != null && activity !=null) {
-                        sites.remove(position);
-                        notifyItemRemoved(position);
-                        notifyItemRangeChanged(position, sites.size());
-                        context.startActivity(intent);
-
-                        NavigationLauncher.startNavigation(activity, origin, destination, null, simulateRoute);
-
-                    }
-
-                }
-            });
-            bikeBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(context, ViewLocationDetail.class);
-                    int position = getAdapterPosition();
-                    intent.putExtra("siteId", sites.get(position).getId());
-                    intent.putExtra("siteName", sites.get(position).getName());
-                    intent.putExtra("siteDesc", sites.get(position).getShortDesc());
-                    intent.putExtra("imageUrl", sites.get(position).getImageUrl());
-                    intent.putExtra("audioUrl", sites.get(position).getAudioUrl());
-
-                    double longitude = sites.get(position).getLongitude();
-                    double latitude = sites.get(position).getLatitude();
-
-                    boolean simulateRoute = true;
-                    MapActivity activity;
-
-                    //hacky, switch to use interface
-                    try {
-                        activity = (MapActivity) view.getContext();
-                        Position origin = Position.fromCoordinates(activity.originLocation.getLongitude(),activity.originLocation.getLatitude());
-                        Position destination = Position.fromCoordinates(longitude, latitude);
-
-                        if(origin != null) {
-                            sites.remove(position);
-                            notifyItemRemoved(position);
-                            notifyItemRangeChanged(position, sites.size());
-                            context.startActivity(intent);
-
-                            NavigationLauncher.startNavigation(activity, origin, destination, null, simulateRoute);
-
-                        }
-                    } catch (Exception e) {
-                        Log.e("location error", e.toString());
-                    }
-                }
-            });
-            siteView.setOnClickListener(this);
+//                    } catch (Exception e) {
+//                        Log.e("location error", e.toString());
+//                    }
+//                }
+//            });
+//            siteView.setOnClickListener(this);
 
         }
 
         @Override
        public void onClick(View view) {
-            int position = getAdapterPosition(); // gets item position
-            if (position != RecyclerView.NO_POSITION) { // Check if an item was deleted
-
-                LatLng selectedLocationLatLng = sites.get(position).getLocation();
-                if(selectedLocationLatLng != null) {
-                    CameraPosition newCameraPosition = new CameraPosition.Builder()
-                            .target(selectedLocationLatLng)
-                            .build();
-                    if(newCameraPosition != null) {
-                        map.easeCamera(CameraUpdateFactory.newCameraPosition(newCameraPosition));
-                        List<Marker> markers = map.getMarkers();
-                        map.selectMarker(markers.get(position));
-                    }
-                }
-            }
+//            int position = getAdapterPosition(); // gets item position
+//            if (position != RecyclerView.NO_POSITION) { // Check if an item was deleted
+//
+//                LatLng selectedLocationLatLng = sites.get(position).getLocation();
+//                if(selectedLocationLatLng != null) {
+//                    CameraPosition newCameraPosition = new CameraPosition.Builder()
+//                            .target(selectedLocationLatLng)
+//                            .build();
+//                    if(newCameraPosition != null) {
+//                        map.easeCamera(CameraUpdateFactory.newCameraPosition(newCameraPosition));
+//                        List<Marker> markers = map.getMarkers();
+//                        map.selectMarker(markers.get(position));
+//                    }
+//                }
+//            }
         }
 
     }
