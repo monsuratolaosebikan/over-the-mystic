@@ -11,10 +11,8 @@ import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.mapbox.mapboxsdk.Mapbox;
-import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
@@ -68,7 +66,6 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
     private DirectionsRoute currentRoute;
     private NavigationMapRoute navigationMapRoute;
     private MapboxDirections directionsApiClient;
-    private static final LatLng MOCK_DEVICE_LOCATION_LAT_LNG = new LatLng(42.4075, -71.1190);
     private String ACCESS_TOKEN = "pk.eyJ1IjoibWVkZm9yZGhpc3RvcmljYWwiLCJhIjoiY2o4ZXNiNHN2M" +
             "TZycjMzb2ttcWp0dDJ1aiJ9.zt52s3jkwqtDc1I2Fv5cJg";
 
@@ -95,7 +92,6 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
 
                 setSites(siteIds);
                 enableLocationPlugin();
-                addFakeLocationMarkerToMap();
                 setUpRecyclerView();
             }
         });
@@ -129,12 +125,6 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
         recyclerView.setAdapter(adapter);
         SnapHelper snapHelper = new LinearSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
-    }
-
-    public void addFakeLocationMarkerToMap() {
-        mapboxMap.addMarker(new MarkerOptions()
-                .position(MOCK_DEVICE_LOCATION_LAT_LNG)
-                .icon(IconFactory.getInstance(this.getApplicationContext()).fromResource(R.drawable.blue_user_location)));
     }
 
     @Override
