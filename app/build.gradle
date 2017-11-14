@@ -40,6 +40,7 @@ android {
 repositories {
     maven { url 'https://maven.google.com' }
     maven { url 'https://maven.fabric.io/public' }
+    maven { url 'https://jitpack.io' }
 }
 
 realm {
@@ -84,4 +85,5 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
         transitive = true
     }
+    compile 'com.github.apl-devs:appintro:v4.2.2'
 }

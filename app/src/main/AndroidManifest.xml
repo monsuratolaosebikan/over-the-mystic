@@ -15,6 +15,7 @@
         android:theme="@style/AppTheme"
         android:name=".MyApplication">
         <service android:name="com.mapbox.services.android.telemetry.service.TelemetryService"/>
+        <activity android:name=".Onboarding" />
         <activity android:name=".StartTourActivity"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -29,7 +30,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MapActivity" />
         </activity>
-
         <activity android:name=".MapActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".StartTourActivity"

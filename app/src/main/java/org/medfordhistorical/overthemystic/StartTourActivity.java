@@ -1,4 +1,7 @@
 package org.medfordhistorical.overthemystic;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v4.view.GestureDetectorCompat;
@@ -30,13 +33,39 @@ import io.fabric.sdk.android.Fabric;
 public class StartTourActivity extends AppCompatActivity {
     private GridView gridView;
     CountingIdlingResource idlingResource = new CountingIdlingResource("Load Data from server");
-
+    public boolean isFirstStart;
+    Context mcontext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_start_tour);
+
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //  Intro App Initialize SharedPreferences
+                SharedPreferences getSharedPreferences = PreferenceManager
+                        .getDefaultSharedPreferences(getBaseContext());
+
+                //  Create a new boolean and preference and set it to true
+                isFirstStart = getSharedPreferences.getBoolean("firstStart", true);
+
+                //  Check either activity or app is open very first time or not and do action
+                if (true) { //isFirstStart for real
+
+                    //  Launch application introduction screen
+                    Intent i = new Intent(StartTourActivity.this, Onboarding.class);
+                    startActivity(i);
+                    SharedPreferences.Editor e = getSharedPreferences.edit();
+                    e.putBoolean("firstStart", false);
+                    e.apply();
+                }
+            }
+        });
+        t.start();
+
         QueryUtils.getSitesFromServer(getApplicationContext(), idlingResource);
 
         final List<Site> sites = getSites();
