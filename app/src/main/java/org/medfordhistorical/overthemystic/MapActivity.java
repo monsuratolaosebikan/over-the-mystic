@@ -3,6 +3,8 @@ package org.medfordhistorical.overthemystic;
 import android.content.Intent;
 import android.location.Location;
 import android.support.annotation.NonNull;
+import android.support.test.espresso.idling.CountingIdlingResource;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -62,10 +64,9 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
     private SelectedSitesRecyclerViewAdapter adapter;
     private RecyclerView recyclerView;
     private List<Site> sites;
-    private int[] siteIds;
     private DirectionsRoute currentRoute;
-    private NavigationMapRoute navigationMapRoute;
     private MapboxDirections directionsApiClient;
+    CountingIdlingResource idlingResource = new CountingIdlingResource("Load data from server");
     private String ACCESS_TOKEN = "pk.eyJ1IjoibWVkZm9yZGhpc3RvcmljYWwiLCJhIjoiY2o4ZXNiNHN2M" +
             "TZycjMzb2ttcWp0dDJ1aiJ9.zt52s3jkwqtDc1I2Fv5cJg";
 
@@ -74,12 +75,10 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
         super.onCreate(savedInstanceState);
         Mapbox.getInstance(this, ACCESS_TOKEN);
         setContentView(R.layout.activity_map);
-        setTitle("Start Navigation");
+
+        QueryUtils.getSitesFromServer(getApplicationContext(), idlingResource);
 
         sites = new ArrayList<>();
-
-        Intent intent = getIntent();
-        siteIds = intent.getIntArrayExtra("siteIds");
 
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
@@ -90,28 +89,20 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
 
                 MapActivity.this.mapboxMap = mapboxMap;
 
-                setSites(siteIds);
+                setSites();
                 enableLocationPlugin();
                 setUpRecyclerView();
             }
         });
     }
 
-    public void setSites(int[] siteIds) {
+    public void setSites() {
         Realm realm = Realm.getDefaultInstance();
-
-        if(siteIds == null) {
-            sites = realm.copyFromRealm(QueryUtils.getSitesFromDatabase());
-            Log.d("sites", sites.toString());
-        }
-        else {
-            for(int i = 0; i < siteIds.length; i++) {
-                Site site = realm.copyFromRealm(QueryUtils.getSiteFromDatabase(siteIds[i]));
-                sites.add(site);
-                mapboxMap.addMarker(new MarkerOptions()
-                        .position(site.getLocation())
-                        .title(site.getName()));
-            }
+        sites = realm.copyFromRealm(QueryUtils.getSitesFromDatabase());
+        for(int i = 0; i < sites.size(); i++) {
+            mapboxMap.addMarker(new MarkerOptions()
+                    .position(sites.get(i).getLocation())
+                    .title(sites.get(i).getName()));
         }
     }
 
@@ -144,9 +135,6 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
 
     @Override
     public void onNavButtonClick(int position, String type) {
-        LatLng selectedLocationLatLng = sites.get(position).getLocation();
-        Log.d("nav button clik", type);
-
         Intent intent = new Intent(this, ViewLocationDetail.class);
         intent.putExtra("siteId", sites.get(position).getId());
         intent.putExtra("siteName", sites.get(position).getName());
@@ -157,7 +145,7 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
         double longitude = sites.get(position).getLongitude();
         double latitude = sites.get(position).getLatitude();
 
-        boolean simulateRoute = true;
+        boolean simulateRoute = false;
 
         if(originLocation != null) {
             Position origin = Position.fromCoordinates(originLocation.getLongitude(), originLocation.getLatitude());
@@ -190,8 +178,8 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
         }
 
         mapboxMap.addPolyline(new PolylineOptions()
-                .add(polylineDirectionsPoints));
-
+                .add(polylineDirectionsPoints))
+                .setColor(ContextCompat.getColor(getApplicationContext(), R.color.mapbox_navigation_route_layer_blue));
     }
 
     private void getDirections(double destinationLatCoordinate, double destinationLongCoordinate) {

@@ -15,7 +15,7 @@
         android:theme="@style/AppTheme"
         android:name=".MyApplication">
         <service android:name="com.mapbox.services.android.telemetry.service.TelemetryService"/>
-        <activity android:name=".StartTourActivity"
+        <activity android:name=".MapActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,15 +30,15 @@
                 android:value=".MapActivity" />
         </activity>
 
-        <activity android:name=".MapActivity"
-            android:launchMode="singleTop"
-            android:parentActivityName=".StartTourActivity"
-            android:screenOrientation="portrait">
-            <!-- The meta-data tag is required if you support API level 15 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".StartTourActivity" />
-        </activity>
+        <!--<activity android:name=".MapActivity"-->
+            <!--android:launchMode="singleTop"-->
+            <!--android:parentActivityName=".StartTourActivity"-->
+            <!--android:screenOrientation="portrait">-->
+            <!--&lt;!&ndash; The meta-data tag is required if you support API level 15 and lower &ndash;&gt;-->
+            <!--<meta-data-->
+                <!--android:name="android.support.PARENT_ACTIVITY"-->
+                <!--android:value=".StartTourActivity" />-->
+        <!--</activity>-->
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="94267c9962dd25d2a82d8bcc876c04313ef573a2" />
