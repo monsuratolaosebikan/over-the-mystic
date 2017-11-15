@@ -53,7 +53,7 @@ public class StartTourActivity extends AppCompatActivity {
                 isFirstStart = getSharedPreferences.getBoolean("firstStart", true);
 
                 //  Check either activity or app is open very first time or not and do action
-                if (true) { //isFirstStart for real
+                if (isFirstStart) {
 
                     //  Launch application introduction screen
                     Intent i = new Intent(StartTourActivity.this, Onboarding.class);
