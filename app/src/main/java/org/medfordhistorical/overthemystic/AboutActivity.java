@@ -22,12 +22,11 @@ public class AboutActivity extends AppCompatActivity {
                 .addEmail("overthemysticapp@gmail.com")
                 .addWebsite("http://medium.com/over-the-mystic")
                 .addPlayStore("org.medfordhistorical.overthemystic")
-                .setDescription("A historical tour of the Medford, MA area. " +
-                        "Made by Tufts Students: Monsurat Olaosebikan, Rebecca Alpert, and Anna Kasawaga")
+                .setDescription("A guided historical tour of the Medford, MA area. " +
+                        "Made by Tufts Students: Monsurat Olaosebikan, Rebecca Alpert, and Anna Kasagawa")
                 .create();
 
         setContentView(aboutPage);
         setTitle("About Over the Mystic");
-
     }
 }
