@@ -6,4 +6,5 @@
     <color name="primaryDarkColor">#0069c0</color>
     <color name="alternativeDarkColor">#0D47A1</color>
     <color name="primaryTextColor">#ffffff</color>
+    <color name="navigationPolyLine">#6ECAF1</color>
 </resources>

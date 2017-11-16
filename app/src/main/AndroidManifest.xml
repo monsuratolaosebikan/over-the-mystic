@@ -1,46 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.medfordhistorical.overthemystic">
-    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
-        android:hardwareAccelerated="false"
+        android:name=".MyApplication"
         android:allowBackup="true"
+        android:hardwareAccelerated="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:name=".MyApplication">
+        android:theme="@style/AppTheme">
         <service android:name="com.mapbox.services.android.telemetry.service.TelemetryService"/>
         <activity android:name=".Onboarding" />
-        <activity android:name=".StartTourActivity"
+        <activity
+            android:name=".MapActivity"
+            android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ViewLocationDetail"
-            android:screenOrientation="portrait"
+        <activity
+            android:name=".ViewLocationDetail"
+            android:parentActivityName=".MapActivity"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MapActivity" />
+        </activity>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="94267c9962dd25d2a82d8bcc876c04313ef573a2" />
+        <activity android:name=".AboutActivity"
             android:parentActivityName=".MapActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MapActivity" />
         </activity>
-        <activity android:name=".MapActivity"
-            android:launchMode="singleTop"
-            android:parentActivityName=".StartTourActivity"
-            android:screenOrientation="portrait">
-            <!-- The meta-data tag is required if you support API level 15 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".StartTourActivity" />
-        </activity>
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="94267c9962dd25d2a82d8bcc876c04313ef573a2" />
     </application>
+
 </manifest>

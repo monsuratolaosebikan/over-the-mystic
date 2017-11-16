@@ -2,13 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_navigate"
-        android:icon="@drawable/ic_action_navigate"
+        android:id="@+id/action_about"
+        android:icon="@drawable/ic_action_info"
         android:title="Go"
-        app:showAsAction="ifRoom|withText"/>
+        app:showAsAction="ifRoom"/>
 
-    <!-- Settings, should always be in the overflow -->
-    <item android:id="@+id/action_settings"
-        android:title="Settings"
-        app:showAsAction="never"/>
 </menu>
