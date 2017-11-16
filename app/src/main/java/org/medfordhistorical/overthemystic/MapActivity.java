@@ -1,7 +1,10 @@
 package org.medfordhistorical.overthemystic;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -63,10 +66,37 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
     private NavigationMapRoute navigationMapRoute;
     private String ACCESS_TOKEN = "pk.eyJ1IjoibWVkZm9yZGhpc3RvcmljYWwiLCJhIjoiY2o4ZXNiNHN2M" +
             "TZycjMzb2ttcWp0dDJ1aiJ9.zt52s3jkwqtDc1I2Fv5cJg";
+    public boolean isFirstStart;
+    Context mcontext;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //  Intro App Initialize SharedPreferences
+                SharedPreferences getSharedPreferences = PreferenceManager
+                        .getDefaultSharedPreferences(getBaseContext());
+
+                //  Create a new boolean and preference and set it to true
+                isFirstStart = getSharedPreferences.getBoolean("firstStart", true);
+
+                //  Check either activity or app is open very first time or not and do action
+                if (true) { //isFirstStart
+
+                    //  Launch application introduction screen
+                    Intent i = new Intent(MapActivity.this, Onboarding.class);
+                    startActivity(i);
+                    SharedPreferences.Editor e = getSharedPreferences.edit();
+                    e.putBoolean("firstStart", false);
+                    e.apply();
+                }
+            }
+        });
+        t.start();
+
         Mapbox.getInstance(this, ACCESS_TOKEN);
         setContentView(R.layout.activity_map);
         setTitle("Start Navigation");

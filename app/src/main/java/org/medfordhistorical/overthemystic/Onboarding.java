@@ -13,16 +13,14 @@ import com.github.paolorotolo.appintro.AppIntroFragment;
 
 public class Onboarding extends AppIntro {
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+    public void init(Bundle savedInstanceState) {
         getSupportActionBar().hide();
 
-        addSlide(AppIntroFragment.newInstance("Welcome", "Explore Medford history by foot or bike.", R.drawable.over_the_mystic_logo, getResources().getColor(R.color.alternativeDarkColor)));
-        addSlide(AppIntroFragment.newInstance("Choose a Location", "Scroll through historical sites to see what's available.", R.drawable.nav, getResources().getColor(R.color.alternativeDarkColor)));
-        addSlide(AppIntroFragment.newInstance("Navigation", "Click the navigation button on a site to choose whether to waxlk or bike.", R.drawable.nav_expanded, getResources().getColor(R.color.alternativeDarkColor)));
-        addSlide(AppIntroFragment.newInstance("Arrival", "Once you've arrived, close navigation to see information on the site.", R.drawable.route, getResources().getColor(R.color.alternativeDarkColor)));
-        addSlide(AppIntroFragment.newInstance("Site Information", "You can click the play button to start or pause narration.", R.drawable.location_detail, getResources().getColor(R.color.alternativeDarkColor)));
+        addSlide(AppIntroSampleSlider.newInstance(R.layout.slide1));
+        addSlide(AppIntroSampleSlider.newInstance(R.layout.slide2));
+        addSlide(AppIntroSampleSlider.newInstance(R.layout.slide3));
+        addSlide(AppIntroSampleSlider.newInstance(R.layout.slide4));
+        addSlide(AppIntroSampleSlider.newInstance(R.layout.slide5));
     }
 
     @Override
