@@ -80,8 +80,7 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
     private LocationManager locationManager;
     ProgressFrameLayout progressFrameLayout;
     CountingIdlingResource idlingResource = new CountingIdlingResource("Load data from server");
-    private String ACCESS_TOKEN = "pk.eyJ1IjoibWVkZm9yZGhpc3RvcmljYWwiLCJhIjoiY2o4ZXNiNHN2M" +
-            "TZycjMzb2ttcWp0dDJ1aiJ9.zt52s3jkwqtDc1I2Fv5cJg";
+    private String ACCESS_TOKEN = "";
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
