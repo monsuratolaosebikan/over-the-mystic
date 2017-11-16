@@ -27,6 +27,7 @@ public class AboutActivity extends AppCompatActivity {
                 .create();
 
         setContentView(aboutPage);
+        setTitle("About Over the Mystic");
 
     }
 }

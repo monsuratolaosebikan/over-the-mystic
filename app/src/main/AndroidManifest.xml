@@ -40,7 +40,12 @@
             android:name="io.fabric.ApiKey"
             android:value="94267c9962dd25d2a82d8bcc876c04313ef573a2" />
 
-        <activity android:name=".AboutActivity"></activity>
+        <activity android:name=".AboutActivity"
+            android:parentActivityName=".MapActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MapActivity" />
+        </activity>
     </application>
 
 </manifest>
