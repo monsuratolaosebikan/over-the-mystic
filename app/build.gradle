@@ -88,4 +88,5 @@ dependencies {
         transitive = true
     }
     compile 'com.github.vlonjatg:progress-activity:v2.0.3'
+    compile 'com.github.medyo:android-about-page:1.2.2'
 }

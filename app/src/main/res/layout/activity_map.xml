@@ -1,10 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-    <!--xmlns:mapbox="http://schemas.android.com/apk/res-auto"-->
-    <!--android:id="@+id/frame"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent">-->
-
 <com.vlonjatg.progressactivity.ProgressFrameLayout android:id="@+id/frame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -16,6 +10,17 @@
     xmlns:progressActivity="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:mapbox="http://schemas.android.com/tools">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:android="http://schemas.android.com/apk/res/android" />
 
 
     <com.mapbox.mapboxsdk.maps.MapView
@@ -33,7 +38,5 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom">
     </android.support.v7.widget.RecyclerView>
-
-<!--</FrameLayout>-->
 
 </com.vlonjatg.progressactivity.ProgressFrameLayout>
