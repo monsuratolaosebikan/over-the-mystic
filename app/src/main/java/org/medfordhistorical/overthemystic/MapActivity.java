@@ -19,6 +19,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
@@ -229,6 +230,7 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
         }
         else {
             checkGPSEnabled();
+            Toast.makeText(this,"Could not get your location", Toast.LENGTH_LONG).show();
         }
 
     }
