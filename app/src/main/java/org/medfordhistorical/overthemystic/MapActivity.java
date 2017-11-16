@@ -1,7 +1,12 @@
 package org.medfordhistorical.overthemystic;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v4.content.ContextCompat;
@@ -13,6 +18,7 @@ import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
 import android.util.Log;
+import android.view.View;
 
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
@@ -26,7 +32,6 @@ import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerMode;
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
-import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
 import com.mapbox.services.android.telemetry.location.LocationEngine;
 import com.mapbox.services.android.telemetry.location.LocationEngineListener;
 import com.mapbox.services.android.telemetry.location.LocationEnginePriority;
@@ -39,6 +44,7 @@ import com.mapbox.services.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.services.api.directions.v5.models.DirectionsRoute;
 import com.mapbox.services.commons.geojson.LineString;
 import com.mapbox.services.commons.models.Position;
+import com.vlonjatg.progressactivity.ProgressFrameLayout;
 
 
 import java.util.List;
@@ -66,6 +72,8 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
     private List<Site> sites;
     private DirectionsRoute currentRoute;
     private MapboxDirections directionsApiClient;
+    private LocationManager locationManager;
+    ProgressFrameLayout progressFrameLayout;
     CountingIdlingResource idlingResource = new CountingIdlingResource("Load data from server");
     private String ACCESS_TOKEN = "pk.eyJ1IjoibWVkZm9yZGhpc3RvcmljYWwiLCJhIjoiY2o4ZXNiNHN2M" +
             "TZycjMzb2ttcWp0dDJ1aiJ9.zt52s3jkwqtDc1I2Fv5cJg";
@@ -83,6 +91,11 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
 
+        progressFrameLayout = findViewById(R.id.frame);
+
+        checkGPSEnabled();
+        checkInternetEnabled();
+
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(final MapboxMap mapboxMap) {
@@ -95,6 +108,65 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
             }
         });
     }
+
+    private View.OnClickListener errorInternetClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            checkInternetEnabled();
+        }
+    };
+
+    private View.OnClickListener errorGPSClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            checkGPSEnabled();
+        }
+    };
+
+    public void checkInternetEnabled() {
+        Drawable errorDrawable = getDrawable(R.drawable.ic_wifi_off);
+        List<Integer> skipIds = new ArrayList<>();
+
+        ConnectivityManager cm =
+                (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+
+        if (isConnected) {
+            progressFrameLayout.showContent();
+        } else {
+            progressFrameLayout.showError(errorDrawable,
+                    "No Connection",
+                    "We could not establish a connection. Make sure wifi or data is enabled.",
+                    "Try Again", errorInternetClickListener, skipIds);
+        }
+    }
+
+    public void checkGPSEnabled() {
+
+        Drawable errorDrawable = getDrawable(R.drawable.ic_location_off);
+        List<Integer> skipIds = new ArrayList<>();
+        locationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+
+            if(originLocation == null) {
+                //let the user enter a location?
+            }
+
+            progressFrameLayout.showContent();
+
+        } else {
+            progressFrameLayout.showError(errorDrawable,
+                    "No Location",
+                    "We could not get your location. Make sure it's enabled in settings",
+                    "Try Again", errorGPSClickListener, skipIds);
+        }
+    }
+
 
     public void setSites() {
         Realm realm = Realm.getDefaultInstance();
@@ -156,7 +228,7 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
             NavigationLauncher.startNavigation(this, origin, destination, null, simulateRoute);
         }
         else {
-            //request permission or notify user of no found location
+            checkGPSEnabled();
         }
 
     }

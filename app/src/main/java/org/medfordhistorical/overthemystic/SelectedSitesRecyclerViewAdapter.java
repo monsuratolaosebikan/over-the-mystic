@@ -102,9 +102,6 @@ public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<Selec
               public void onClick(View view) {
                   int position = getAdapterPosition();
                   clickListener.onNavButtonClick(position, "bike");
-                  sites.remove(position);
-                  notifyItemRemoved(position);
-                  notifyItemRangeChanged(position, sites.size());
               }
           });
 
@@ -113,9 +110,6 @@ public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<Selec
               public void onClick(View view) {
                   int position = getAdapterPosition();
                   clickListener.onNavButtonClick(getAdapterPosition(), "walk");
-                  sites.remove(position);
-                  notifyItemRemoved(position);
-                  notifyItemRangeChanged(position, sites.size());
               }
           });
 
