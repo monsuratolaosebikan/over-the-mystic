@@ -2,6 +2,9 @@ package org.medfordhistorical.overthemystic;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.location.Location;
+import android.preference.PreferenceManager;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
@@ -85,6 +88,31 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //  Intro App Initialize SharedPreferences
+                SharedPreferences getSharedPreferences = PreferenceManager
+                        .getDefaultSharedPreferences(getBaseContext());
+
+                //  Create a new boolean and preference and set it to true
+                isFirstStart = getSharedPreferences.getBoolean("firstStart", true);
+
+                //  Check either activity or app is open very first time or not and do action
+                if (isFirstStart) {
+
+                    //  Launch application introduction screen
+                    Intent i = new Intent(MapActivity.this, Onboarding.class);
+                    startActivity(i);
+                    SharedPreferences.Editor e = getSharedPreferences.edit();
+                    e.putBoolean("firstStart", false);
+                    e.apply();
+                }
+            }
+        });
+        t.start();
+
         Mapbox.getInstance(this, ACCESS_TOKEN);
         setContentView(R.layout.activity_map);
         Toolbar myToolbar = findViewById(R.id.my_toolbar);

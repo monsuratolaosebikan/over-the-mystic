@@ -87,6 +87,7 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
         transitive = true
     }
+    compile 'com.github.apl-devs:appintro:v4.2.2'
     compile 'com.github.vlonjatg:progress-activity:v2.0.3'
     compile 'com.github.medyo:android-about-page:1.2.2'
 }
