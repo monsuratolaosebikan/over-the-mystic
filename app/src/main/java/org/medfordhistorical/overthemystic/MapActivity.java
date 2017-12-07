@@ -50,11 +50,13 @@ import com.mapbox.services.api.directions.v5.DirectionsCriteria;
 import com.mapbox.services.api.directions.v5.MapboxDirections;
 import com.mapbox.services.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.services.api.directions.v5.models.DirectionsRoute;
+import com.mapbox.services.api.utils.turf.TurfHelpers;
 import com.mapbox.services.commons.geojson.LineString;
 import com.mapbox.services.commons.models.Position;
 import com.vlonjatg.progressactivity.ProgressFrameLayout;
 
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -97,7 +99,7 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
                         .getDefaultSharedPreferences(getBaseContext());
 
                 //  Create a new boolean and preference and set it to true
-                isFirstStart = getSharedPreferences.getBoolean("firstStart", true);
+                boolean isFirstStart = getSharedPreferences.getBoolean("firstStart", true);
 
                 //  Check either activity or app is open very first time or not and do action
                 if (isFirstStart) {
@@ -136,8 +138,8 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
 
                 MapActivity.this.mapboxMap = mapboxMap;
 
-                setSites();
                 enableLocationPlugin();
+                setSites();
                 setUpRecyclerView();
             }
         });
@@ -209,6 +211,14 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
             mapboxMap.addMarker(new MarkerOptions()
                     .position(sites.get(i).getLocation())
                     .title(sites.get(i).getName()));
+        }
+
+        updateSiteDistances();
+    }
+
+    public void updateSiteDistances() {
+        for(int i = 0; i < sites.size(); i++) {
+            getDistanceInMiles(sites.get(i).getLatitude(), sites.get(i).getLongitude(), Integer.valueOf(i));
         }
     }
 
@@ -323,7 +333,56 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
                     drawRoute(currentRoute, "walk");
 
                 }
+            }
 
+            @Override
+            public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
+                Log.e("MapActivity", throwable.toString());
+            }
+        });
+    }
+
+    private void getDistanceInMiles(double destinationLatCoordinate, double destinationLongCoordinate, final Integer index) {
+
+        if(originLocation == null) return;
+
+        Position mockCurrentLocation = Position.fromLngLat(originLocation.getLongitude(),
+                originLocation.getLatitude());
+
+        Position destinationMarker = Position.fromLngLat(destinationLongCoordinate, destinationLatCoordinate);
+
+        directionsApiClient = new MapboxDirections.Builder()
+                .setOrigin(mockCurrentLocation)
+                .setDestination(destinationMarker)
+                .setOverview(DirectionsCriteria.OVERVIEW_FULL)
+                .setProfile(DirectionsCriteria.PROFILE_WALKING)
+                .setAccessToken(ACCESS_TOKEN)
+                .build();
+
+        directionsApiClient.enqueueCall(new Callback<DirectionsResponse>() {
+            @Override
+            public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
+
+                if (response.body() == null) {
+                    Log.e("MapActivity", "No routes found, make sure you set the right user and access token.");
+                }
+
+                else if (response.body().getRoutes().size() < 1) {
+                    Log.e("MapActivity", "No routes found");
+                }
+
+                else {
+
+                    DecimalFormat df = new DecimalFormat("#.#");
+                    String formattedDistance = String.valueOf(df.format(TurfHelpers.convertDistance(
+                            response.body().getRoutes().get(0).getDistance(), "meters", "miles")));
+
+                    if (index != null) {
+                        sites.get(index).setDistanceInMiles(formattedDistance);
+                        adapter.notifyDataSetChanged();
+                    }
+
+                }
             }
 
             @Override
@@ -399,6 +458,8 @@ public class MapActivity extends AppCompatActivity implements LocationEngineList
             originLocation = location;
             setCameraPosition(location);
             locationEngine.removeLocationEngineListener(this);
+
+            updateSiteDistances();
         }
     }
 

@@ -44,7 +44,7 @@
         android:gravity="center"
         android:paddingLeft="64dp"
         android:paddingRight="64dp"
-        android:text="Click the navigation button on a site to choose whether to waxlk or bike."
+        android:text="Click the navigation button on a site to choose whether to walk or bike."
         android:textColor="#ffffff"
         android:textSize="16sp" />
 

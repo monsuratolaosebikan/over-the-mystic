@@ -54,6 +54,10 @@ public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<Selec
         TextView nameTextView = viewHolder.nameTextView;
         nameTextView.setText(site.getName());
 
+        TextView distanceTextView = viewHolder.siteDistanceTextView;
+        String distanceText = site.getDistanceInMiles() + " mi.";
+        distanceTextView.setText(distanceText);
+
         FloatingActionMenu navigateBtn = viewHolder.navigateBtn;
         navigateBtn.bringToFront();
         navigateBtn.setIconAnimated(false);
@@ -74,6 +78,7 @@ public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<Selec
 
   public class ViewHolder extends RecyclerView.ViewHolder {
       private TextView nameTextView;
+      private TextView siteDistanceTextView;
       private ImageView imageView;
       private CardView cardView;
       private FloatingActionMenu navigateBtn;
@@ -84,6 +89,7 @@ public class SelectedSitesRecyclerViewAdapter extends RecyclerView.Adapter<Selec
           super(siteView);
 
           nameTextView = siteView.findViewById(R.id.site_name);
+          siteDistanceTextView = siteView.findViewById(R.id.site_distance);
           imageView = siteView.findViewById(R.id.site_image);
           cardView = siteView.findViewById(R.id.card_view);
           navigateBtn = siteView.findViewById(R.id.navigate);

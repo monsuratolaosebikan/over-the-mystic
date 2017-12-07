@@ -74,7 +74,7 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_height="65dp"
                     android:layout_gravity="top"
                     android:background="@color/cardview_dark_background"
                     android:orientation="vertical">
@@ -84,9 +84,20 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textStyle="bold"
-                        android:padding="8dp"
+                        android:paddingTop="8dp"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
                         android:textSize="18sp"
                         android:textColor="#FFFFFF"/>
+
+                    <TextView
+                        android:id="@+id/site_distance"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:textSize="18sp"
+                        android:textColor="#FFF"/>
                 </LinearLayout>
             </FrameLayout>
     </LinearLayout>

@@ -25,6 +25,7 @@ public class Site extends RealmObject {
     private String audioUrl;
     private double latitude;
     private double longitude;
+    private String distanceInMiles = "-";
 
     private boolean isSelected = false;
 
@@ -104,5 +105,13 @@ public class Site extends RealmObject {
 
     public boolean isSelected(){
         return this.isSelected;
+    }
+
+    public String getDistanceInMiles() {
+        return distanceInMiles;
+    }
+
+    public void setDistanceInMiles(String distanceInMiles) {
+        this.distanceInMiles = distanceInMiles;
     }
 }
